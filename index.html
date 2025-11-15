@@ -176,29 +176,46 @@
         }
         
         /* === PERBAIKAN 3: STYLING UNTUK BUTTON DISABLED === */
-.btn:disabled {
-    background-color: #7f8c8d !important;
-    cursor: not-allowed !important;
-    opacity: 0.6;
-}
+        .btn:disabled {
+            background-color: #7f8c8d !important;
+            cursor: not-allowed !important;
+            opacity: 0.6;
+        }
 
-.btn:disabled:hover {
-    background-color: #7f8c8d !important;
-}
+        .btn:disabled:hover {
+            background-color: #7f8c8d !important;
+        }
 
-.product-stock.out-of-stock {
-    color: var(--danger) !important;
-    font-weight: bold;
-}
-/* === END PERBAIKAN 3 === */
+        .product-stock.out-of-stock {
+            color: var(--danger) !important;
+            font-weight: bold;
+        }
+        /* === END PERBAIKAN 3 === */
+        
+        /* === STYLING UNTUK EMOJI SELECT === */
+        .emoji-select {
+            width: 100%;
+            padding: 10px;
+            background-color: #34495e;
+            border: 1px solid #2c3e50;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+        }
 
-.categories {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 2rem 0;
-}
+        .emoji-select option {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .emoji-preview {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 20px;
+            vertical-align: middle;
+        }
         
         .categories {
             display: flex;
@@ -747,12 +764,12 @@
 
     <section class="container" id="products">
         <div class="categories">
-             <button class="category-btn active" data-category="all">Semua</button>
-        <button class="category-btn" data-category="weapons">Senjata</button>
-        <button class="category-btn" data-category="ammo">Peluru</button>
-        <button class="category-btn" data-category="vest">Armor</button>
-        <button class="category-btn" data-category="attachment">Attachment</button>
-        <button class="category-btn" data-category="drugs">Drugs</button>
+            <button class="category-btn active" data-category="all">Semua</button>
+            <button class="category-btn" data-category="weapons">Senjata</button>
+            <button class="category-btn" data-category="ammo">Peluru</button>
+            <button class="category-btn" data-category="vest">Armor</button>
+            <button class="category-btn" data-category="attachment">Attachment</button>
+            <button class="category-btn" data-category="drugs">Drugs</button>
         </div>
 
         <div class="products" id="productsContainer">
@@ -779,15 +796,15 @@
                     <input type="text" id="productName" placeholder="Nama produk">
                 </div>
                 <div class="form-group">
-    <label for="productCategory">Kategori</label>
-    <select id="productCategory">
-        <option value="weapons">Senjata</option>
-        <option value="ammo">Peluru</option>
-        <option value="vest">Armor</option>
-        <option value="attachment">Attachment</option>
-        <option value="drugs">Drugs</option>
-    </select>
-</div>
+                    <label for="productCategory">Kategori</label>
+                    <select id="productCategory">
+                        <option value="weapons">Senjata</option>
+                        <option value="ammo">Peluru</option>
+                        <option value="vest">Armor</option>
+                        <option value="attachment">Attachment</option>
+                        <option value="drugs">Drugs</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="productPrice">Harga ($)</label>
                     <input type="number" id="productPrice" placeholder="Harga produk">
@@ -798,7 +815,20 @@
                 </div>
                 <div class="form-group">
                     <label for="productImage">Emoji/Gambar</label>
-                    <input type="text" id="productImage" placeholder="🔫" value="🔫">
+                    <select id="productImage" class="emoji-select">
+                        <option value="🔫" data-emoji="🔫">🔫 Senjata</option>
+                        <option value="📦" data-emoji="📦">📦 Peluru/Armor</option>
+                        <option value="🛠️" data-emoji="🛠️">🛠️ Attachment</option>
+                        <option value="🌿" data-emoji="🌿">🌿 Ganja</option>
+                        <option value="💊" data-emoji="💊">💊 Meth</option>
+                        <option value="🔍" data-emoji="🔍">🔍 Scope</option>
+                        <option value="📯" data-emoji="📯">📯 Magazine</option>
+                        <option value="🔇" data-emoji="🔇">🔇 Silencer</option>
+                        <option value="🫳" data-emoji="🫳">🫳 Grip</option>
+                        <option value="🔦" data-emoji="🔦">🔦 Flashlight</option>
+                        <option value="custom">Custom Emoji...</option>
+                    </select>
+                    <input type="text" id="customEmoji" placeholder="Masukkan emoji custom" style="display: none; margin-top: 5px;">
                 </div>
                 <button class="btn btn-success" id="addProductBtn">Tambah Produk</button>
             </div>
@@ -928,33 +958,25 @@
         // PRODUCTS.JS
         // =============================================
         
-        // Data produk
+        // Data produk dengan kategori attachment
         let products = [
-            // Data produk - TAMBAHKAN ATTACHMENT
-let products = [
-    { id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
-    { id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
-    { id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
-    { id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
-    { id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
-    { id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
-    { id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
-    { id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
-    { id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
-    { id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
-    // === PRODUK ATTACHMENT BARU ===
-    { id: 11, name: "Tactical Flashlight (ALL WEAPON KECUALI CERAMIC)", category: "attachment", price: 0, stock: 0, image: "🔧" },
-    { id: 12, name: "Suppressor (SMG,Rifle)", category: "attachment", price: 25000, stock: 15, image: "🔧" },
-    { id: 13, name: "Tactical Suppressor (Pistol 50, SNIPER)", category: "attachment", price: 8000, stock: 30, image: "🔧" },
-    { id: 14, name: "Grip (SMG, Rifle)", category: "attachment", price: 12000, stock: 25, image: "🔧" },
-    { id: 15, name: "Extended Pistol Clip (ALL PISTOL)", category: "attachment", price: 6000, stock: 35, image: "🔧" },
-    { id: 16, name: "Extended SMG Clip (ALL SMG)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-	{ id: 17, name: "Medium scope (RIFLE, SNIPER)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-	{ id: 18, name: "Extended Rifle Clip (ALL RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-	{ id: 19, name: "SMG Drum (ALL SMG)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-	{ id: 20, name: "Rifle Drum (ALL RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-	{ id: 21, name: "Macro Scope (SMG, RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
-];
+            { id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
+            { id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
+            { id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
+            { id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
+            { id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
+            { id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
+            { id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
+            { id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
+            { id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
+            { id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
+            // === PRODUK ATTACHMENT BARU ===
+            { id: 11, name: "Scope 4x", category: "attachment", price: 15000, stock: 20, image: "🔍" },
+            { id: 12, name: "Scope 8x", category: "attachment", price: 25000, stock: 15, image: "🔍" },
+            { id: 13, name: "Magazine Extended", category: "attachment", price: 8000, stock: 30, image: "📯" },
+            { id: 14, name: "Silencer", category: "attachment", price: 12000, stock: 25, image: "🔇" },
+            { id: 15, name: "Grip Vertical", category: "attachment", price: 6000, stock: 35, image: "🫳" },
+            { id: 16, name: "Flashlight", category: "attachment", price: 5000, stock: 40, image: "🔦" }
         ];
 
         let currentCategory = 'all';
@@ -968,48 +990,48 @@ let products = [
         }
 
         // Fungsi untuk menampilkan produk
-function displayProducts() {
-    const productsContainer = document.getElementById('productsContainer');
-    productsContainer.innerHTML = '';
-    
-    const filteredProducts = currentCategory === 'all' 
-        ? products 
-        : products.filter(product => product.category === currentCategory);
-    
-    filteredProducts.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        
-        // === PERBAIKAN 3: UPDATE STOCK INFO & BUTTON ===
-        const stockInfo = product.stock > 0 
-            ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
-            : `<div class="product-stock out-of-stock">🛑 STOK HABIS</div>`;
-        
-        productCard.innerHTML = `
-            <div class="product-image">
-                ${product.image}
-            </div>
-            <div class="product-info">
-                <div class="product-name">${product.name}</div>
-                <div class="product-price">$${product.price}</div>
-                ${stockInfo}
-                <div class="product-actions">
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
-                        <input type="text" class="quantity-input" id="quantity-${product.id}" value="0" readonly>
-                        <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
+        function displayProducts() {
+            const productsContainer = document.getElementById('productsContainer');
+            productsContainer.innerHTML = '';
+            
+            const filteredProducts = currentCategory === 'all' 
+                ? products 
+                : products.filter(product => product.category === currentCategory);
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                // === PERBAIKAN 3: UPDATE STOCK INFO & BUTTON ===
+                const stockInfo = product.stock > 0 
+                    ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
+                    : `<div class="product-stock out-of-stock">🛑 STOK HABIS</div>`;
+                
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        ${product.image}
                     </div>
-                    <button class="btn" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
-                        ${product.stock === 0 ? '🛑 Stok Habis' : 'Tambah'}
-                    </button>
-                </div>
-            </div>
-        `;
-        // === END PERBAIKAN 3 ===
-        
-        productsContainer.appendChild(productCard);
-    });
-}
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">$${product.price}</div>
+                        ${stockInfo}
+                        <div class="product-actions">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
+                                <input type="text" class="quantity-input" id="quantity-${product.id}" value="0" readonly>
+                                <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
+                            </div>
+                            <button class="btn" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
+                                ${product.stock === 0 ? '🛑 Stok Habis' : 'Tambah'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                // === END PERBAIKAN 3 ===
+                
+                productsContainer.appendChild(productCard);
+            });
+        }
 
         // Fungsi untuk menambah jumlah produk
         function increaseQuantity(productId) {
@@ -1039,53 +1061,53 @@ function displayProducts() {
         let cart = [];
 
         // Fungsi untuk menambahkan produk ke keranjang
-function addToCart(productId) {
-    const quantityInput = document.getElementById(`quantity-${productId}`);
-    const quantity = parseInt(quantityInput.value);
-    
-    if (quantity <= 0) {
-        showNotification('Harap pilih jumlah produk yang ingin dibeli!', true);
-        return;
-    }
-    
-    const product = products.find(p => p.id === productId);
-    
-    // === PERBAIKAN: CEK JIKA STOK 0 ===
-    if (product.stock === 0) {
-        showNotification(`❌ ${product.name} stok habis! Tidak bisa ditambahkan ke keranjang.`, true);
-        return;
-    }
-    
-    // Cek stok
-    if (product.stock < quantity) {
-        showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
-        return;
-    }
-    
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        // Cek stok untuk item yang sudah ada di keranjang
-        if (product.stock < (existingItem.quantity + quantity)) {
-            showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
-            return;
+        function addToCart(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            const quantity = parseInt(quantityInput.value);
+            
+            if (quantity <= 0) {
+                showNotification('Harap pilih jumlah produk yang ingin dibeli!', true);
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
+            
+            // === PERBAIKAN 1: CEK JIKA STOK 0 ===
+            if (product.stock === 0) {
+                showNotification(`❌ ${product.name} stok habis! Tidak bisa ditambahkan ke keranjang.`, true);
+                return;
+            }
+            
+            // Cek stok
+            if (product.stock < quantity) {
+                showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                // Cek stok untuk item yang sudah ada di keranjang
+                if (product.stock < (existingItem.quantity + quantity)) {
+                    showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
+                    return;
+                }
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: quantity,
+                    image: product.image
+                });
+            }
+            
+            updateCart();
+            quantityInput.value = 0;
+            
+            showNotification(`${quantity} ${product.name} telah ditambahkan ke keranjang!`, false);
         }
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: quantity,
-            image: product.image
-        });
-    }
-    
-    updateCart();
-    quantityInput.value = 0;
-    
-    showNotification(`${quantity} ${product.name} telah ditambahkan ke keranjang!`, false);
-}
 
         // Fungsi untuk memperbarui tampilan keranjang
         function updateCart() {
@@ -1215,96 +1237,96 @@ function addToCart(productId) {
 
         let ordersHistory = JSON.parse(localStorage.getItem('ordersHistory')) || [];
 
-       // Fungsi untuk mengirim pesanan ke Discord
-async function sendOrderToDiscord() {
-    const customerName = document.getElementById('customerName').value;
-    const discordId = document.getElementById('discordId').value;
-    const additionalInfo = document.getElementById('additionalInfo').value;
-    
-    if (!customerName) {
-        showNotification('Harap masukkan nama pemesan!', true);
-        return;
-    }
-    
-    if (cart.length === 0) {
-        showNotification('Keranjang Anda kosong!', true);
-        return;
-    }
-    
-    // Cek stok semua item sebelum memproses
-    for (const item of cart) {
-        const product = products.find(p => p.id === item.id);
-        if (!product || product.stock < item.quantity) {
-            showNotification(`Stok ${item.name} tidak mencukupi!`, true);
-            return;
-        }
-    }
-    
-    // Format pesanan untuk Discord sesuai permintaan
-    let totalPrice = 0;
-    let itemsText = '';
-    const orderItems = [];
-    
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        totalPrice += itemTotal;
-        itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
-        orderItems.push({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity
-        });
-        
-        // Kurangi stok
-        const product = products.find(p => p.id === item.id);
-        if (product) {
-            product.stock -= item.quantity;
-        }
-    });
-    
-    // === PERBAIKAN: SIMPAN PERUBAHAN STOK KE LOCALSTORAGE ===
-    saveProducts(); // BARIS INI YANG PERLU DITAMBAHKAN
-    
-    const now = new Date();
-    const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
-    
-    const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${customerName}\n${discordId ? `**Discord ID:** ${discordId}\n` : ''}${additionalInfo ? `**Info Tambahan:** ${additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
-    
-    try {
-        // Kirim pesanan ke Discord menggunakan webhook
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                content: orderMessage,
-                username: 'Las Valkyrie Order Bot'
-            })
-        });
-        
-        if (response.ok) {
-            showNotification('✅ Pesanan berhasil dikirim ke Discord!', false);
+        // Fungsi untuk mengirim pesanan ke Discord
+        async function sendOrderToDiscord() {
+            const customerName = document.getElementById('customerName').value;
+            const discordId = document.getElementById('discordId').value;
+            const additionalInfo = document.getElementById('additionalInfo').value;
             
-            // Simpan riwayat pesanan
-            addOrderToHistory({
-                customerName: customerName,
-                discordId: discordId,
-                additionalInfo: additionalInfo,
-                items: orderItems,
-                total: totalPrice
+            if (!customerName) {
+                showNotification('Harap masukkan nama pemesan!', true);
+                return;
+            }
+            
+            if (cart.length === 0) {
+                showNotification('Keranjang Anda kosong!', true);
+                return;
+            }
+            
+            // Cek stok semua item sebelum memproses
+            for (const item of cart) {
+                const product = products.find(p => p.id === item.id);
+                if (!product || product.stock < item.quantity) {
+                    showNotification(`Stok ${item.name} tidak mencukupi!`, true);
+                    return;
+                }
+            }
+            
+            // Format pesanan untuk Discord sesuai permintaan
+            let totalPrice = 0;
+            let itemsText = '';
+            const orderItems = [];
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                totalPrice += itemTotal;
+                itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
+                orderItems.push({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                });
+                
+                // Kurangi stok
+                const product = products.find(p => p.id === item.id);
+                if (product) {
+                    product.stock -= item.quantity;
+                }
             });
             
-            resetCart();
-        } else {
-            console.error('Discord API Error:', response.status, response.statusText);
-            showNotification('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda!', true);
+            // Simpan perubahan stok
+            saveProducts();
+            
+            const now = new Date();
+            const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${customerName}\n${discordId ? `**Discord ID:** ${discordId}\n` : ''}${additionalInfo ? `**Info Tambahan:** ${additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
+            
+            try {
+                // Kirim pesanan ke Discord menggunakan webhook
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: orderMessage,
+                        username: 'Las Valkyrie Order Bot'
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('✅ Pesanan berhasil dikirim ke Discord!', false);
+                    
+                    // Simpan riwayat pesanan
+                    addOrderToHistory({
+                        customerName: customerName,
+                        discordId: discordId,
+                        additionalInfo: additionalInfo,
+                        items: orderItems,
+                        total: totalPrice
+                    });
+                    
+                    resetCart();
+                } else {
+                    console.error('Discord API Error:', response.status, response.statusText);
+                    showNotification('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda!', true);
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+                showNotification('❌ Terjadi kesalahan jaringan. Periksa koneksi internet Anda!', true);
+            }
         }
-    } catch (error) {
-        console.error('Network Error:', error);
-        showNotification('❌ Terjadi kesalahan jaringan. Periksa koneksi internet Anda!', true);
-    }
-}
 
         // =============================================
         // ADMIN.JS
@@ -1369,6 +1391,51 @@ async function sendOrderToDiscord() {
             }
         }
 
+        // Fungsi untuk handle emoji selection
+        function setupEmojiSelection() {
+            const emojiSelect = document.getElementById('productImage');
+            const customEmojiInput = document.getElementById('customEmoji');
+            const productCategory = document.getElementById('productCategory');
+            
+            // Auto-select emoji berdasarkan kategori
+            productCategory.addEventListener('change', function() {
+                const category = this.value;
+                const emojiMap = {
+                    'weapons': '🔫',
+                    'ammo': '📦',
+                    'vest': '📦',
+                    'attachment': '🛠️',
+                    'drugs': '🌿'
+                };
+                
+                if (emojiMap[category]) {
+                    emojiSelect.value = emojiMap[category];
+                    customEmojiInput.style.display = 'none';
+                }
+            });
+            
+            // Handle custom emoji selection
+            emojiSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customEmojiInput.style.display = 'block';
+                    customEmojiInput.focus();
+                } else {
+                    customEmojiInput.style.display = 'none';
+                }
+            });
+        }
+
+        // Get selected emoji value
+        function getSelectedEmoji() {
+            const emojiSelect = document.getElementById('productImage');
+            const customEmojiInput = document.getElementById('customEmoji');
+            
+            if (emojiSelect.value === 'custom') {
+                return customEmojiInput.value || '🔫';
+            }
+            return emojiSelect.value;
+        }
+
         // Product Management Functions
         function addProduct() {
             if (!isAdminLoggedIn) {
@@ -1380,7 +1447,7 @@ async function sendOrderToDiscord() {
             const category = document.getElementById('productCategory').value;
             const price = parseInt(document.getElementById('productPrice').value);
             const stock = parseInt(document.getElementById('productStock').value);
-            const image = document.getElementById('productImage').value;
+            const image = getSelectedEmoji();
             
             if (!name || !price) {
                 showNotification('Harap isi nama dan harga produk!', true);
@@ -1405,6 +1472,9 @@ async function sendOrderToDiscord() {
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
             document.getElementById('productStock').value = '0';
+            document.getElementById('productImage').value = '🔫';
+            document.getElementById('customEmoji').style.display = 'none';
+            document.getElementById('customEmoji').value = '';
             
             showNotification('Produk berhasil ditambahkan!', false);
         }
@@ -1445,16 +1515,16 @@ async function sendOrderToDiscord() {
             });
         }
 
-       function getCategoryName(category) {
-    const categories = {
-        'weapons': 'Senjata',
-        'ammo': 'Peluru', 
-        'vest': 'Armor',
-        'attachment': 'Attachment',
-        'drugs': 'Drugs'
-    };
-    return categories[category] || category;
-}
+        function getCategoryName(category) {
+            const categories = {
+                'weapons': 'Senjata',
+                'ammo': 'Peluru',
+                'vest': 'Armor',
+                'attachment': 'Attachment',
+                'drugs': 'Drugs'
+            };
+            return categories[category] || category;
+        }
 
         function modifyStock(action) {
             if (!isAdminLoggedIn) {
@@ -1662,6 +1732,9 @@ async function sendOrderToDiscord() {
             // Inisialisasi tampilan
             displayProducts();
             updateCart();
+            
+            // Setup emoji selection
+            setupEmojiSelection();
             
             // Event Listeners untuk produk dan kategori
             document.querySelectorAll('.category-btn').forEach(button => {
