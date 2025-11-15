@@ -1164,96 +1164,96 @@
 
         let ordersHistory = JSON.parse(localStorage.getItem('ordersHistory')) || [];
 
-        // Fungsi untuk mengirim pesanan ke Discord
-        async function sendOrderToDiscord() {
-            const customerName = document.getElementById('customerName').value;
-            const discordId = document.getElementById('discordId').value;
-            const additionalInfo = document.getElementById('additionalInfo').value;
+       // Fungsi untuk mengirim pesanan ke Discord
+async function sendOrderToDiscord() {
+    const customerName = document.getElementById('customerName').value;
+    const discordId = document.getElementById('discordId').value;
+    const additionalInfo = document.getElementById('additionalInfo').value;
+    
+    if (!customerName) {
+        showNotification('Harap masukkan nama pemesan!', true);
+        return;
+    }
+    
+    if (cart.length === 0) {
+        showNotification('Keranjang Anda kosong!', true);
+        return;
+    }
+    
+    // Cek stok semua item sebelum memproses
+    for (const item of cart) {
+        const product = products.find(p => p.id === item.id);
+        if (!product || product.stock < item.quantity) {
+            showNotification(`Stok ${item.name} tidak mencukupi!`, true);
+            return;
+        }
+    }
+    
+    // Format pesanan untuk Discord sesuai permintaan
+    let totalPrice = 0;
+    let itemsText = '';
+    const orderItems = [];
+    
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        totalPrice += itemTotal;
+        itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
+        orderItems.push({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        });
+        
+        // Kurangi stok
+        const product = products.find(p => p.id === item.id);
+        if (product) {
+            product.stock -= item.quantity;
+        }
+    });
+    
+    // === PERBAIKAN: SIMPAN PERUBAHAN STOK KE LOCALSTORAGE ===
+    saveProducts(); // BARIS INI YANG PERLU DITAMBAHKAN
+    
+    const now = new Date();
+    const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
+    
+    const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${customerName}\n${discordId ? `**Discord ID:** ${discordId}\n` : ''}${additionalInfo ? `**Info Tambahan:** ${additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
+    
+    try {
+        // Kirim pesanan ke Discord menggunakan webhook
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: orderMessage,
+                username: 'Las Valkyrie Order Bot'
+            })
+        });
+        
+        if (response.ok) {
+            showNotification('✅ Pesanan berhasil dikirim ke Discord!', false);
             
-            if (!customerName) {
-                showNotification('Harap masukkan nama pemesan!', true);
-                return;
-            }
-            
-            if (cart.length === 0) {
-                showNotification('Keranjang Anda kosong!', true);
-                return;
-            }
-            
-            // Cek stok semua item sebelum memproses
-            for (const item of cart) {
-                const product = products.find(p => p.id === item.id);
-                if (!product || product.stock < item.quantity) {
-                    showNotification(`Stok ${item.name} tidak mencukupi!`, true);
-                    return;
-                }
-            }
-            
-            // Format pesanan untuk Discord sesuai permintaan
-            let totalPrice = 0;
-            let itemsText = '';
-            const orderItems = [];
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalPrice += itemTotal;
-                itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
-                orderItems.push({
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity
-                });
-                
-                // Kurangi stok
-                const product = products.find(p => p.id === item.id);
-                if (product) {
-                    product.stock -= item.quantity;
-                }
+            // Simpan riwayat pesanan
+            addOrderToHistory({
+                customerName: customerName,
+                discordId: discordId,
+                additionalInfo: additionalInfo,
+                items: orderItems,
+                total: totalPrice
             });
             
-            // Simpan perubahan stok
-            saveProducts();
-            
-            const now = new Date();
-            const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
-            
-            const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${customerName}\n${discordId ? `**Discord ID:** ${discordId}\n` : ''}${additionalInfo ? `**Info Tambahan:** ${additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
-            
-            try {
-                // Kirim pesanan ke Discord menggunakan webhook
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: orderMessage,
-                        username: 'Las Valkyrie Order Bot'
-                    })
-                });
-                
-                if (response.ok) {
-                    showNotification('✅ Pesanan berhasil dikirim ke Discord!', false);
-                    
-                    // Simpan riwayat pesanan
-                    addOrderToHistory({
-                        customerName: customerName,
-                        discordId: discordId,
-                        additionalInfo: additionalInfo,
-                        items: orderItems,
-                        total: totalPrice
-                    });
-                    
-                    resetCart();
-                } else {
-                    console.error('Discord API Error:', response.status, response.statusText);
-                    showNotification('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda!', true);
-                }
-            } catch (error) {
-                console.error('Network Error:', error);
-                showNotification('❌ Terjadi kesalahan jaringan. Periksa koneksi internet Anda!', true);
-            }
+            resetCart();
+        } else {
+            console.error('Discord API Error:', response.status, response.statusText);
+            showNotification('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda!', true);
         }
+    } catch (error) {
+        console.error('Network Error:', error);
+        showNotification('❌ Terjadi kesalahan jaringan. Periksa koneksi internet Anda!', true);
+    }
+}
 
         // =============================================
         // ADMIN.JS
