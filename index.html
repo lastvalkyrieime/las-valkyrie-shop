@@ -175,6 +175,31 @@
             background-color: #5b73b4;
         }
         
+        /* === PERBAIKAN 3: STYLING UNTUK BUTTON DISABLED === */
+.btn:disabled {
+    background-color: #7f8c8d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn:disabled:hover {
+    background-color: #7f8c8d !important;
+}
+
+.product-stock.out-of-stock {
+    color: var(--danger) !important;
+    font-weight: bold;
+}
+/* === END PERBAIKAN 3 === */
+
+.categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 2rem 0;
+}
+        
         .categories {
             display: flex;
             justify-content: center;
@@ -722,11 +747,12 @@
 
     <section class="container" id="products">
         <div class="categories">
-            <button class="category-btn active" data-category="all">Semua</button>
-            <button class="category-btn" data-category="weapons">Senjata</button>
-            <button class="category-btn" data-category="ammo">Peluru</button>
-            <button class="category-btn" data-category="vest">Armor</button>
-            <button class="category-btn" data-category="drugs">Drugs</button>
+             <button class="category-btn active" data-category="all">Semua</button>
+        <button class="category-btn" data-category="weapons">Senjata</button>
+        <button class="category-btn" data-category="ammo">Peluru</button>
+        <button class="category-btn" data-category="vest">Armor</button>
+        <button class="category-btn" data-category="attachment">Attachment</button>
+        <button class="category-btn" data-category="drugs">Drugs</button>
         </div>
 
         <div class="products" id="productsContainer">
@@ -753,14 +779,15 @@
                     <input type="text" id="productName" placeholder="Nama produk">
                 </div>
                 <div class="form-group">
-                    <label for="productCategory">Kategori</label>
-                    <select id="productCategory">
-                        <option value="weapons">Senjata</option>
-                        <option value="ammo">Peluru</option>
-                        <option value="vest">Armor</option>
-                        <option value="drugs">Drugs</option>
-                    </select>
-                </div>
+    <label for="productCategory">Kategori</label>
+    <select id="productCategory">
+        <option value="weapons">Senjata</option>
+        <option value="ammo">Peluru</option>
+        <option value="vest">Armor</option>
+        <option value="attachment">Attachment</option>
+        <option value="drugs">Drugs</option>
+    </select>
+</div>
                 <div class="form-group">
                     <label for="productPrice">Harga ($)</label>
                     <input type="number" id="productPrice" placeholder="Harga produk">
@@ -903,16 +930,31 @@
         
         // Data produk
         let products = [
-            { id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
-            { id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
-            { id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
-            { id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
-            { id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
-            { id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
-            { id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
-            { id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
-            { id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
-            { id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
+            // Data produk - TAMBAHKAN ATTACHMENT
+let products = [
+    { id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
+    { id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
+    { id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
+    { id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
+    { id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
+    { id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
+    { id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
+    { id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
+    { id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
+    { id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
+    // === PRODUK ATTACHMENT BARU ===
+    { id: 11, name: "Tactical Flashlight (ALL WEAPON KECUALI CERAMIC)", category: "attachment", price: 0, stock: 0, image: "🔧" },
+    { id: 12, name: "Suppressor (SMG,Rifle)", category: "attachment", price: 25000, stock: 15, image: "🔧" },
+    { id: 13, name: "Tactical Suppressor (Pistol 50, SNIPER)", category: "attachment", price: 8000, stock: 30, image: "🔧" },
+    { id: 14, name: "Grip (SMG, Rifle)", category: "attachment", price: 12000, stock: 25, image: "🔧" },
+    { id: 15, name: "Extended Pistol Clip (ALL PISTOL)", category: "attachment", price: 6000, stock: 35, image: "🔧" },
+    { id: 16, name: "Extended SMG Clip (ALL SMG)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+	{ id: 17, name: "Medium scope (RIFLE, SNIPER)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+	{ id: 18, name: "Extended Rifle Clip (ALL RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+	{ id: 19, name: "SMG Drum (ALL SMG)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+	{ id: 20, name: "Rifle Drum (ALL RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+	{ id: 21, name: "Macro Scope (SMG, RIFLE)", category: "attachment", price: 5000, stock: 40, image: "🔧" }
+];
         ];
 
         let currentCategory = 'all';
@@ -926,45 +968,48 @@
         }
 
         // Fungsi untuk menampilkan produk
-        function displayProducts() {
-            const productsContainer = document.getElementById('productsContainer');
-            productsContainer.innerHTML = '';
-            
-            const filteredProducts = currentCategory === 'all' 
-                ? products 
-                : products.filter(product => product.category === currentCategory);
-            
-            filteredProducts.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                
-                const stockInfo = product.stock > 0 
-                    ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
-                    : `<div class="product-stock" style="color: var(--danger);">Stok Habis</div>`;
-                
-                productCard.innerHTML = `
-                    <div class="product-image">
-                        ${product.image}
+function displayProducts() {
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = '';
+    
+    const filteredProducts = currentCategory === 'all' 
+        ? products 
+        : products.filter(product => product.category === currentCategory);
+    
+    filteredProducts.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        
+        // === PERBAIKAN 3: UPDATE STOCK INFO & BUTTON ===
+        const stockInfo = product.stock > 0 
+            ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
+            : `<div class="product-stock out-of-stock">🛑 STOK HABIS</div>`;
+        
+        productCard.innerHTML = `
+            <div class="product-image">
+                ${product.image}
+            </div>
+            <div class="product-info">
+                <div class="product-name">${product.name}</div>
+                <div class="product-price">$${product.price}</div>
+                ${stockInfo}
+                <div class="product-actions">
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
+                        <input type="text" class="quantity-input" id="quantity-${product.id}" value="0" readonly>
+                        <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
                     </div>
-                    <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">$${product.price}</div>
-                        ${stockInfo}
-                        <div class="product-actions">
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
-                                <input type="text" class="quantity-input" id="quantity-${product.id}" value="0" readonly>
-                                <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
-                            </div>
-                            <button class="btn" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
-                                ${product.stock === 0 ? 'Stok Habis' : 'Tambah'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                productsContainer.appendChild(productCard);
-            });
-        }
+                    <button class="btn" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
+                        ${product.stock === 0 ? '🛑 Stok Habis' : 'Tambah'}
+                    </button>
+                </div>
+            </div>
+        `;
+        // === END PERBAIKAN 3 ===
+        
+        productsContainer.appendChild(productCard);
+    });
+}
 
         // Fungsi untuk menambah jumlah produk
         function increaseQuantity(productId) {
@@ -994,47 +1039,53 @@
         let cart = [];
 
         // Fungsi untuk menambahkan produk ke keranjang
-        function addToCart(productId) {
-            const quantityInput = document.getElementById(`quantity-${productId}`);
-            const quantity = parseInt(quantityInput.value);
-            
-            if (quantity <= 0) {
-                showNotification('Harap pilih jumlah produk yang ingin dibeli!', true);
-                return;
-            }
-            
-            const product = products.find(p => p.id === productId);
-            
-            // Cek stok
-            if (product.stock < quantity) {
-                showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
-                return;
-            }
-            
-            const existingItem = cart.find(item => item.id === productId);
-            
-            if (existingItem) {
-                // Cek stok untuk item yang sudah ada di keranjang
-                if (product.stock < (existingItem.quantity + quantity)) {
-                    showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
-                    return;
-                }
-                existingItem.quantity += quantity;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: quantity,
-                    image: product.image
-                });
-            }
-            
-            updateCart();
-            quantityInput.value = 0;
-            
-            showNotification(`${quantity} ${product.name} telah ditambahkan ke keranjang!`, false);
+function addToCart(productId) {
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantity = parseInt(quantityInput.value);
+    
+    if (quantity <= 0) {
+        showNotification('Harap pilih jumlah produk yang ingin dibeli!', true);
+        return;
+    }
+    
+    const product = products.find(p => p.id === productId);
+    
+    // === PERBAIKAN: CEK JIKA STOK 0 ===
+    if (product.stock === 0) {
+        showNotification(`❌ ${product.name} stok habis! Tidak bisa ditambahkan ke keranjang.`, true);
+        return;
+    }
+    
+    // Cek stok
+    if (product.stock < quantity) {
+        showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
+        return;
+    }
+    
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        // Cek stok untuk item yang sudah ada di keranjang
+        if (product.stock < (existingItem.quantity + quantity)) {
+            showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
+            return;
         }
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: quantity,
+            image: product.image
+        });
+    }
+    
+    updateCart();
+    quantityInput.value = 0;
+    
+    showNotification(`${quantity} ${product.name} telah ditambahkan ke keranjang!`, false);
+}
 
         // Fungsi untuk memperbarui tampilan keranjang
         function updateCart() {
@@ -1394,15 +1445,16 @@ async function sendOrderToDiscord() {
             });
         }
 
-        function getCategoryName(category) {
-            const categories = {
-                'weapons': 'Senjata',
-                'ammo': 'Peluru',
-                'vest': 'Armor',
-                'drugs': 'Drugs'
-            };
-            return categories[category] || category;
-        }
+       function getCategoryName(category) {
+    const categories = {
+        'weapons': 'Senjata',
+        'ammo': 'Peluru', 
+        'vest': 'Armor',
+        'attachment': 'Attachment',
+        'drugs': 'Drugs'
+    };
+    return categories[category] || category;
+}
 
         function modifyStock(action) {
             if (!isAdminLoggedIn) {
