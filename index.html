@@ -6,6 +6,7 @@
     <title>Las Valkyrie - Resource Order System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS TETAP SAMA SEPERTI SEBELUMNYA */
         :root {
             --primary: #2c3e50;
             --secondary: #3498db;
@@ -754,7 +755,7 @@
 
     <script>
         // =============================================
-        // KONFIGURASI BACKEND - PRODUCTION
+        // KONFIGURASI BACKEND - TESTING
         // =============================================
         const BACKEND_URL = 'https://las-valkyrie-backend.vercel.app';
         const API_BASE_URL = `${BACKEND_URL}/api`;
@@ -775,33 +776,30 @@
         // Cek koneksi backend dengan timeout
         async function checkBackendConnection() {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                console.log('🔍 Checking backend connection...');
                 
                 const response = await fetch(`${BACKEND_URL}/`, {
-                    signal: controller.signal,
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 
-                clearTimeout(timeoutId);
+                console.log('📡 Backend response status:', response.status);
                 
                 if (response.ok) {
                     const data = await response.json();
                     isBackendOnline = true;
                     updateBackendStatus('✅ Backend terhubung!', 'online');
+                    console.log('✅ Backend connected successfully');
                     return true;
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
                 isBackendOnline = false;
-                const message = error.name === 'AbortError' 
-                    ? '❌ Backend timeout - menggunakan mode lokal'
-                    : '❌ Backend offline - menggunakan mode lokal';
-                updateBackendStatus(message, 'offline');
+                console.error('❌ Backend connection failed:', error);
+                updateBackendStatus('❌ Backend offline - menggunakan mode lokal', 'offline');
                 return false;
             }
         }
@@ -818,34 +816,28 @@
             const productsContainer = document.getElementById('productsContainer');
             
             try {
-                console.log('🔄 Loading products from:', `${API_BASE_URL}/products`);
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                console.log('🔄 Loading products from backend...');
                 
                 const response = await fetch(`${API_BASE_URL}/products`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
-                    },
-                    signal: controller.signal
+                    }
                 });
                 
-                clearTimeout(timeoutId);
-                
-                console.log('📡 Response status:', response.status);
+                console.log('📦 Products response status:', response.status);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const result = await response.json();
-                console.log('📦 Products data received:', result);
+                console.log('✅ Products loaded successfully:', result);
                 
                 if (result.success) {
                     products = result.data || [];
-                    console.log('✅ Products loaded from backend:', products.length);
+                    console.log('📊 Products data:', products);
                     displayProducts();
                 } else {
                     throw new Error(result.error || 'Gagal memuat produk dari backend');
@@ -893,40 +885,12 @@
                     price: 5000,
                     stock: 20,
                     description: 'Ganja kualitas tinggi - MODE LOKAL'
-                },
-                {
-                    _id: 'local-4',
-                    name: 'Meth Crystal',
-                    category: 'meth',
-                    price: 7500,
-                    stock: 8,
-                    description: 'Meth murni - MODE LOKAL'
-                },
-                {
-                    _id: 'local-5',
-                    name: 'Red Dot Sight',
-                    category: 'attachment',
-                    price: 3000,
-                    stock: 25,
-                    description: 'Attachment bidikan - MODE LOKAL'
-                },
-                {
-                    _id: 'local-6',
-                    name: 'Crowbar',
-                    category: 'alat_rampok',
-                    price: 2000,
-                    stock: 30,
-                    description: 'Alat untuk merampok - MODE LOKAL'
                 }
             ];
         }
 
         // Kirim order ke backend
         async function sendOrderToBackend(orderData) {
-            if (!isBackendOnline) {
-                return { success: false, error: 'Backend offline' };
-            }
-
             try {
                 console.log('📤 Sending order to backend:', orderData);
                 
@@ -948,13 +912,53 @@
             }
         }
 
+        // Load orders dari backend
+        async function loadOrdersFromBackend() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('❌ Error loading orders:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Update order status
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('❌ Error updating order:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
         // =============================================
-        // FUNGSI ADMIN YANG DIPERBAIKI
+        // FUNGSI ADMIN
         // =============================================
 
         // Login admin
         async function loginAdmin(username, password) {
             try {
+                console.log('🔐 Attempting admin login...');
+                
                 const response = await fetch(`${API_BASE_URL}/admin/login`, {
                     method: 'POST',
                     headers: {
@@ -965,6 +969,7 @@
                 });
 
                 const result = await response.json();
+                console.log('🔑 Login response:', result);
                 
                 if (result.success) {
                     isAdminLoggedIn = true;
@@ -975,34 +980,13 @@
                     showNotification('Login admin berhasil!', false);
                     return true;
                 } else {
-                    // Fallback untuk demo
-                    if (username === 'admin' && password === 'lvime2025') {
-                        isAdminLoggedIn = true;
-                        document.getElementById('adminPanel').style.display = 'block';
-                        document.getElementById('loginModal').style.display = 'none';
-                        document.getElementById('adminLoginBtn').style.display = 'none';
-                        loadAdminProducts();
-                        showNotification('Login admin berhasil!', false);
-                        return true;
-                    } else {
-                        showNotification('ID atau password admin salah!', true);
-                        return false;
-                    }
-                }
-            } catch (error) {
-                // Fallback untuk demo jika backend error
-                if (username === 'admin' && password === 'lvime2025') {
-                    isAdminLoggedIn = true;
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('loginModal').style.display = 'none';
-                    document.getElementById('adminLoginBtn').style.display = 'none';
-                    loadAdminProducts();
-                    showNotification('Login admin berhasil!', false);
-                    return true;
-                } else {
-                    showNotification('Error koneksi backend! Coba login dengan admin/lvime2025', true);
+                    showNotification('ID atau password admin salah!', true);
                     return false;
                 }
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                showNotification('Error koneksi backend!', true);
+                return false;
             }
         }
 
@@ -1434,6 +1418,8 @@
         // INISIALISASI APLIKASI
         // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing application...');
+            
             // Cek koneksi backend
             await checkBackendConnection();
             
@@ -1496,8 +1482,67 @@
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab') + 'Tab';
                     document.getElementById(tabId).classList.add('active');
+                    
+                    // Load orders jika tab orders diklik
+                    if (tabId === 'ordersTab') {
+                        loadOrdersTab();
+                    }
                 });
             });
+
+            // Fungsi untuk load orders tab
+            async function loadOrdersTab() {
+                const ordersList = document.getElementById('ordersList');
+                ordersList.innerHTML = '<div class="loading">Memuat pesanan...</div>';
+                
+                try {
+                    const result = await loadOrdersFromBackend();
+                    
+                    if (result.success) {
+                        const orders = result.data || [];
+                        
+                        if (orders.length === 0) {
+                            ordersList.innerHTML = '<div class="loading">Tidak ada pesanan</div>';
+                            return;
+                        }
+                        
+                        ordersList.innerHTML = orders.map(order => `
+                            <div class="product-row">
+                                <div>
+                                    <div class="product-name">Order #${order._id ? order._id.slice(-6) : 'N/A'}</div>
+                                    <div class="product-price">Customer: ${order.customerName}</div>
+                                    <div class="product-stock">Total: Rp ${formatCurrency(order.totalPrice)} | Status: ${order.status}</div>
+                                    <div class="product-stock">Items: ${order.items ? order.items.length : 0} items</div>
+                                </div>
+                                <div class="product-actions-admin">
+                                    <button class="btn btn-success" onclick="updateOrderStatus('${order._id}', 'completed')">Selesai</button>
+                                    <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Batal</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        throw new Error(result.error || 'Gagal memuat pesanan');
+                    }
+                } catch (error) {
+                    ordersList.innerHTML = `<div class="error-message">Gagal memuat pesanan: ${error.message}</div>`;
+                }
+            }
+
+            // Fungsi untuk update order status
+            window.updateOrderStatus = async function(orderId, status) {
+                try {
+                    const result = await updateOrderStatus(orderId, status);
+                    
+                    if (result.success) {
+                        showNotification(`Status order berhasil diupdate menjadi ${status}`, false);
+                        loadOrdersTab(); // Reload orders
+                    } else {
+                        throw new Error(result.error || 'Gagal update status order');
+                    }
+                } catch (error) {
+                    showNotification(`Gagal update status order: ${error.message}`, true);
+                }
+            };
         });
     </script>
 </body>
