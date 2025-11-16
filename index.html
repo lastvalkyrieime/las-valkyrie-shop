@@ -1,479 +1,448 @@
-// =============================================
-// KONFIGURASI BACKEND - PRODUCTION
-// =============================================
-const BACKEND_URL = 'https://las-valkyrie-backend.vercel.app';
-const API_BASE_URL = `${BACKEND_URL}/api`;
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-// =============================================
-// STATE APLIKASI
-// =============================================
-let products = [];
-let cart = [];
-let currentCategory = 'all';
-let isBackendOnline = false;
-let isAdminLoggedIn = false;
+const app = express();
 
-// =============================================
-// FUNGSI BACKEND YANG DIPERBAIKI
-// =============================================
+// CORS configuration
+app.use(cors({
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
 
-// Cek koneksi backend
-async function checkBackendConnection() {
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// MongoDB Connection dengan connection string yang valid
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://lastvalkyrieime_db_user:lvime2025@lvresourcedatabase.9wth93k.mongodb.net/las_valkyrie?retryWrites=true&w=majority';
+
+console.log('🔧 Initializing MongoDB connection...');
+console.log('📝 Database: las_valkyrie');
+
+const connectDB = async () => {
     try {
-        console.log('🔍 Checking backend connection...');
-        
-        const response = await fetch(`${BACKEND_URL}/`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
+        await mongoose.connect(MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
         });
-        
-        console.log('📡 Backend response status:', response.status);
-        
-        if (response.ok) {
-            const data = await response.json();
-            isBackendOnline = true;
-            updateBackendStatus('✅ Backend & MongoDB terhubung!', 'online');
-            console.log('✅ Backend connected successfully');
-            return true;
-        } else {
-            throw new Error(`HTTP ${response.status}`);
-        }
+        console.log('✅ MongoDB Connected Successfully to las_valkyrie database');
     } catch (error) {
-        isBackendOnline = false;
-        console.error('❌ Backend connection failed:', error);
-        updateBackendStatus('❌ Backend offline - menggunakan mode lokal', 'offline');
-        return false;
+        console.error('❌ MongoDB Connection Error:', error.message);
+        console.log('⚠️  Using fallback mode (in-memory storage)');
     }
+};
+
+connectDB();
+
+// MongoDB Schemas
+const productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    category: { type: String, required: true },
+    price: { type: Number, required: true },
+    stock: { type: Number, required: true },
+    description: { type: String, default: '' }
+}, { timestamps: true });
+
+const orderSchema = new mongoose.Schema({
+    customerName: { type: String, required: true },
+    discordId: { type: String, default: '' },
+    additionalInfo: { type: String, default: '' },
+    items: [{
+        productId: String,
+        name: String,
+        price: Number,
+        quantity: Number
+    }],
+    totalPrice: { type: Number, required: true },
+    status: { type: String, default: 'pending' }
+}, { timestamps: true });
+
+const Product = mongoose.model('Product', productSchema);
+const Order = mongoose.model('Order', orderSchema);
+
+// Fallback data jika MongoDB down
+const fallbackProducts = [
+    {
+        _id: 'fallback_1',
+        name: 'AK-47',
+        category: 'senjata',
+        price: 15000,
+        stock: 10,
+        description: 'Senjata assault rifle - FALLBACK MODE'
+    },
+    {
+        _id: 'fallback_2',
+        name: 'Body Armor', 
+        category: 'armor',
+        price: 8000,
+        stock: 15,
+        description: 'Pelindung tubuh level 3 - FALLBACK MODE'
+    },
+    {
+        _id: 'fallback_3',
+        name: 'Ganja Premium',
+        category: 'ganja',
+        price: 5000,
+        stock: 20,
+        description: 'Ganja kualitas tinggi - FALLBACK MODE'
+    }
+];
+
+let fallbackOrders = [];
+
+// Check MongoDB connection
+function isMongoConnected() {
+    return mongoose.connection.readyState === 1;
 }
 
-// Update status backend
-function updateBackendStatus(message, status) {
-    const statusElement = document.getElementById('backendStatus');
-    statusElement.textContent = message;
-    statusElement.className = `backend-status ${status}`;
-}
-
-// Load products dari BACKEND
-async function loadProducts() {
-    const productsContainer = document.getElementById('productsContainer');
-    
+// ===== PRODUCT ROUTES =====
+// Get all products
+app.get('/api/products', async (req, res) => {
     try {
-        console.log('🔄 Loading products from backend...');
+        console.log('📦 GET /api/products called');
         
-        const response = await fetch(`${API_BASE_URL}/products`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        
-        console.log('📦 Products response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('✅ Products loaded successfully:', result);
-        
-        if (result.success) {
-            products = result.data || [];
-            console.log('📊 Products data from:', result.source, 'Count:', products.length);
-            displayProducts();
+        if (isMongoConnected()) {
+            const products = await Product.find().sort({ createdAt: -1 });
+            console.log(`✅ Found ${products.length} products in MongoDB`);
             
-            // Tampilkan info source
-            if (result.source === 'mongodb') {
-                showNotification('📦 Produk dimuat dari MongoDB', false);
-            } else if (result.source === 'fallback') {
-                showNotification('⚠️ Menggunakan data fallback', true);
-            }
+            return res.json({
+                success: true,
+                data: products,
+                message: 'Products retrieved from MongoDB',
+                source: 'mongodb',
+                count: products.length
+            });
         } else {
-            throw new Error(result.error || 'Gagal memuat produk dari backend');
+            console.log('⚠️  MongoDB not connected, using fallback data');
+            return res.json({
+                success: true,
+                data: fallbackProducts,
+                message: 'Products retrieved from fallback storage',
+                source: 'fallback',
+                count: fallbackProducts.length
+            });
         }
     } catch (error) {
-        console.error('❌ Error loading products:', error);
-        
-        // Fallback ke data lokal
-        products = getLocalProducts();
-        displayProducts();
-        
-        productsContainer.innerHTML += `
-            <div class="error-message">
-                ⚠️ Menggunakan data lokal: ${error.message}
-                <br>
-                <button class="btn" onclick="loadProducts()" style="margin-top: 10px;">🔄 Coba Lagi</button>
-            </div>
-        `;
-    }
-}
-
-// Fungsi fallback data lokal
-function getLocalProducts() {
-    return [
-        {
-            _id: 'local-1',
-            name: 'AK-47 (Local)',
-            category: 'senjata',
-            price: 15000,
-            stock: 10,
-            description: 'Senjata assault rifle - MODE LOKAL'
-        },
-        {
-            _id: 'local-2',
-            name: 'Body Armor (Local)', 
-            category: 'armor',
-            price: 8000,
-            stock: 15,
-            description: 'Pelindung tubuh level 3 - MODE LOKAL'
-        },
-        {
-            _id: 'local-3',
-            name: 'Ganja Premium (Local)',
-            category: 'ganja',
-            price: 5000,
-            stock: 20,
-            description: 'Ganja kualitas tinggi - MODE LOKAL'
-        }
-    ];
-}
-
-// =============================================
-// FUNGSI ADMIN - SELALU GUNAKAN BACKEND
-// =============================================
-
-// Tambah produk baru - SELALU KIRIM KE BACKEND
-async function addProduct(event) {
-    event.preventDefault();
-    
-    const name = document.getElementById('productName').value;
-    const category = document.getElementById('productCategory').value;
-    const price = parseInt(document.getElementById('productPrice').value);
-    const stock = parseInt(document.getElementById('productStock').value);
-    const description = document.getElementById('productDescription').value;
-    
-    const productData = {
-        name: name,
-        category: category,
-        price: price,
-        stock: stock,
-        description: description
-    };
-    
-    try {
-        console.log('📤 Adding product to backend:', productData);
-        
-        // SELALU KIRIM KE BACKEND, bahkan jika offline
-        const response = await fetch(`${API_BASE_URL}/products`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(productData)
+        console.error('❌ Error in /api/products:', error.message);
+        res.json({
+            success: true,
+            data: fallbackProducts,
+            message: 'Products retrieved from fallback storage (error)',
+            source: 'fallback',
+            count: fallbackProducts.length
         });
+    }
+});
+
+// Add new product
+app.post('/api/products', async (req, res) => {
+    try {
+        console.log('➕ POST /api/products called:', req.body);
         
-        const result = await response.json();
-        console.log('📥 Add product response:', result);
+        const productData = req.body;
         
-        if (result.success) {
-            const source = result.source || 'unknown';
-            const message = source === 'mongodb' 
-                ? '✅ Produk berhasil ditambahkan ke MongoDB!' 
-                : '✅ Produk berhasil ditambahkan ke sistem!';
+        if (isMongoConnected()) {
+            const newProduct = new Product(productData);
+            const savedProduct = await newProduct.save();
             
-            showNotification(message, false);
-            document.getElementById('addProductForm').reset();
+            console.log('✅ Product saved to MongoDB:', savedProduct._id);
             
-            // Reload products dari backend untuk mendapatkan data terbaru
-            await loadProducts();
-            loadAdminProducts();
+            return res.json({
+                success: true,
+                message: 'Product created successfully in MongoDB',
+                data: savedProduct,
+                source: 'mongodb'
+            });
         } else {
-            throw new Error(result.error || 'Gagal menambah produk');
+            // Add to fallback data
+            const newProduct = {
+                _id: 'prod_' + Date.now(),
+                ...productData,
+                createdAt: new Date().toISOString()
+            };
+            fallbackProducts.push(newProduct);
+            
+            console.log('✅ Product saved to fallback storage');
+            
+            return res.json({
+                success: true,
+                message: 'Product created successfully in fallback storage',
+                data: newProduct,
+                source: 'fallback'
+            });
         }
     } catch (error) {
-        console.error('❌ Error adding product:', error);
-        showNotification(`❌ Gagal menambah produk: ${error.message}`, true);
-    }
-}
-
-// Hapus produk - SELALU GUNAKAN BACKEND
-async function deleteProduct(productId, showNotificationFlag = true) {
-    if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
-        return;
-    }
-    
-    try {
-        console.log('🗑️ Deleting product from backend:', productId);
-        
-        const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json'
-            }
+        console.error('❌ Error in POST /api/products:', error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
+    }
+});
+
+// Delete product
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        console.log('🗑️  DELETE /api/products called for ID:', productId);
         
-        const result = await response.json();
-        
-        if (result.success) {
-            if (showNotificationFlag) {
-                showNotification('✅ Produk berhasil dihapus!', false);
+        if (isMongoConnected()) {
+            const deletedProduct = await Product.findByIdAndDelete(productId);
+            
+            if (!deletedProduct) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Product not found in MongoDB'
+                });
             }
-            // Reload dari backend untuk sync data
-            await loadProducts();
-            loadAdminProducts();
+            
+            console.log('✅ Product deleted from MongoDB');
+            
+            return res.json({
+                success: true,
+                message: 'Product deleted successfully from MongoDB',
+                data: deletedProduct
+            });
         } else {
-            throw new Error(result.error || 'Gagal menghapus produk');
+            // Delete from fallback data
+            const productIndex = fallbackProducts.findIndex(p => p._id === productId);
+            if (productIndex === -1) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Product not found in fallback storage'
+                });
+            }
+            
+            const deletedProduct = fallbackProducts.splice(productIndex, 1)[0];
+            console.log('✅ Product deleted from fallback storage');
+            
+            return res.json({
+                success: true,
+                message: 'Product deleted successfully from fallback storage',
+                data: deletedProduct
+            });
         }
     } catch (error) {
-        console.error('❌ Error deleting product:', error);
-        showNotification(`❌ Gagal menghapus produk: ${error.message}`, true);
-    }
-}
-
-// Edit produk - GUNAKAN BACKEND
-async function editProduct(productId) {
-    const product = products.find(p => p._id === productId);
-    
-    if (!product) {
-        showNotification('Produk tidak ditemukan!', true);
-        return;
-    }
-    
-    // Isi form dengan data produk
-    document.getElementById('productName').value = product.name;
-    document.getElementById('productCategory').value = product.category;
-    document.getElementById('productPrice').value = product.price;
-    document.getElementById('productStock').value = product.stock;
-    document.getElementById('productDescription').value = product.description || '';
-    
-    // Hapus produk lama DARI BACKEND
-    await deleteProduct(productId, false);
-    
-    showNotification('📝 Isi form dengan data baru dan klik "Tambah Produk" untuk menyimpan perubahan', false);
-}
-
-// Load produk untuk admin
-function loadAdminProducts() {
-    const adminProductList = document.getElementById('adminProductList');
-    adminProductList.innerHTML = '';
-    
-    if (products.length === 0) {
-        adminProductList.innerHTML = '<div class="loading">Tidak ada produk.</div>';
-        return;
-    }
-    
-    products.forEach(product => {
-        const productRow = document.createElement('div');
-        productRow.className = 'product-row';
-        productRow.innerHTML = `
-            <div>
-                <div class="product-name">${getCategoryEmoji(product.category)} ${product.name}</div>
-                <div class="product-price">Rp ${formatCurrency(product.price)} | Stok: ${product.stock} | Kategori: ${getCategoryLabel(product.category)}</div>
-                ${product.description ? `<div class="product-stock">${product.description}</div>` : ''}
-                <div class="product-stock" style="font-size: 0.8rem; color: #888;">
-                    ID: ${product._id}
-                </div>
-            </div>
-            <div class="product-actions-admin">
-                <button class="btn btn-warning" onclick="editProduct('${product._id}')">Edit</button>
-                <button class="btn btn-danger" onclick="deleteProduct('${product._id}')">Hapus</button>
-            </div>
-        `;
-        adminProductList.appendChild(productRow);
-    });
-}
-
-// =============================================
-// FUNGSI ORDER - GUNAKAN BACKEND
-// =============================================
-
-// Kirim order ke backend
-async function sendOrderToBackend(orderData) {
-    try {
-        console.log('📤 Sending order to backend:', orderData);
-        
-        const response = await fetch(`${API_BASE_URL}/orders`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(orderData)
+        console.error('❌ Error in DELETE /api/products:', error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
-        
-        const result = await response.json();
-        console.log('📥 Order response:', result);
-        return result;
-    } catch (error) {
-        console.error('❌ Error sending order:', error);
-        return { success: false, error: error.message };
     }
-}
+});
 
-// Load orders dari backend
-async function loadOrdersFromBackend() {
+// ===== ORDER ROUTES =====
+// Create new order
+app.post('/api/orders', async (req, res) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/orders`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
+        console.log('🛒 POST /api/orders called:', req.body);
         
-        const result = await response.json();
-        return result;
+        const orderData = req.body;
+        
+        if (isMongoConnected()) {
+            const newOrder = new Order(orderData);
+            const savedOrder = await newOrder.save();
+            
+            console.log('✅ Order saved to MongoDB');
+            
+            return res.json({
+                success: true,
+                message: 'Order created successfully in MongoDB',
+                data: savedOrder,
+                source: 'mongodb'
+            });
+        } else {
+            // Add to fallback orders
+            const newOrder = {
+                _id: 'order_' + Date.now(),
+                ...orderData,
+                createdAt: new Date().toISOString()
+            };
+            fallbackOrders.push(newOrder);
+            
+            console.log('✅ Order saved to fallback storage');
+            
+            return res.json({
+                success: true,
+                message: 'Order created successfully in fallback storage',
+                data: newOrder,
+                source: 'fallback'
+            });
+        }
     } catch (error) {
-        console.error('❌ Error loading orders:', error);
-        return { success: false, error: error.message };
+        console.error('❌ Error in POST /api/orders:', error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
-}
+});
+
+// Get all orders
+app.get('/api/orders', async (req, res) => {
+    try {
+        console.log('📋 GET /api/orders called');
+        
+        if (isMongoConnected()) {
+            const orders = await Order.find().sort({ createdAt: -1 });
+            
+            return res.json({
+                success: true,
+                data: orders,
+                message: 'Orders retrieved from MongoDB',
+                count: orders.length
+            });
+        } else {
+            return res.json({
+                success: true,
+                data: fallbackOrders,
+                message: 'Orders retrieved from fallback storage',
+                count: fallbackOrders.length
+            });
+        }
+    } catch (error) {
+        console.error('❌ Error in GET /api/orders:', error.message);
+        res.json({
+            success: true,
+            data: fallbackOrders,
+            message: 'Orders retrieved from fallback storage (error)',
+            count: fallbackOrders.length
+        });
+    }
+});
 
 // Update order status
-async function updateOrderStatus(orderId, status) {
+app.put('/api/orders/:id', async (req, res) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ status })
-        });
+        const orderId = req.params.id;
+        const { status } = req.body;
         
-        const result = await response.json();
-        return result;
+        console.log('✏️  PUT /api/orders called for ID:', orderId, 'Status:', status);
+        
+        if (isMongoConnected()) {
+            const updatedOrder = await Order.findByIdAndUpdate(
+                orderId,
+                { status },
+                { new: true }
+            );
+            
+            if (!updatedOrder) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Order not found in MongoDB'
+                });
+            }
+            
+            return res.json({
+                success: true,
+                message: 'Order status updated successfully in MongoDB',
+                data: updatedOrder
+            });
+        } else {
+            // Update in fallback orders
+            const order = fallbackOrders.find(o => o._id === orderId);
+            if (!order) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Order not found in fallback storage'
+                });
+            }
+            
+            order.status = status;
+            return res.json({
+                success: true,
+                message: 'Order status updated successfully in fallback storage',
+                data: order
+            });
+        }
     } catch (error) {
-        console.error('❌ Error updating order:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// =============================================
-// FUNGSI UTAMA APLIKASI (TETAP SAMA)
-// =============================================
-
-// Tampilkan products
-function displayProducts() {
-    const productsContainer = document.getElementById('productsContainer');
-    productsContainer.innerHTML = '';
-    
-    const filteredProducts = currentCategory === 'all' 
-        ? products 
-        : products.filter(product => product.category === currentCategory);
-    
-    if (filteredProducts.length === 0) {
-        productsContainer.innerHTML = '<div class="loading">😔 Tidak ada produk dalam kategori ini</div>';
-        return;
-    }
-    
-    filteredProducts.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        
-        const stockInfo = product.stock > 0 
-            ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
-            : `<div class="product-stock" style="color: var(--danger);">Stok Habis</div>`;
-        
-        productCard.innerHTML = `
-            <div class="product-image">
-                ${getCategoryEmoji(product.category)}
-            </div>
-            <div class="product-info">
-                <div class="product-name">${product.name}</div>
-                <div class="product-price">Rp ${formatCurrency(product.price)}</div>
-                ${stockInfo}
-                ${product.description ? `<div class="product-stock">${product.description}</div>` : ''}
-                <div class="product-actions">
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="decreaseQuantity('${product._id}')">-</button>
-                        <input type="text" class="quantity-input" id="quantity-${product._id}" value="0" readonly>
-                        <button class="quantity-btn" onclick="increaseQuantity('${product._id}')">+</button>
-                    </div>
-                    <button class="btn" onclick="addToCart('${product._id}')" ${product.stock === 0 ? 'disabled' : ''}>
-                        ${product.stock === 0 ? 'Stok Habis' : 'Tambah'}
-                    </button>
-                </div>
-            </div>
-        `;
-        productsContainer.appendChild(productCard);
-    });
-}
-
-// Fungsi helper untuk emoji kategori
-function getCategoryEmoji(category) {
-    const emojis = {
-        'senjata': '🔫',
-        'peluru': '📦',
-        'armor': '🦺',
-        'attachment': '⚙️',
-        'ganja': '🌿',
-        'meth': '💊',
-        'alat_rampok': '🔧'
-    };
-    return emojis[category] || '📦';
-}
-
-// Fungsi helper untuk label kategori
-function getCategoryLabel(category) {
-    const labels = {
-        'senjata': 'Senjata',
-        'peluru': 'Peluru',
-        'armor': 'Armor',
-        'attachment': 'Attachment',
-        'ganja': 'Ganja',
-        'meth': 'Meth',
-        'alat_rampok': 'Alat Rampok'
-    };
-    return labels[category] || category;
-}
-
-// Format currency
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('id-ID').format(amount);
-}
-
-// ... (Fungsi keranjang dan lainnya tetap sama)
-
-// Notifikasi
-function showNotification(message, isError = false) {
-    const notification = document.getElementById('notification');
-    notification.textContent = message;
-    notification.className = 'notification' + (isError ? ' error' : '');
-    notification.style.display = 'block';
-    
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 5000);
-}
-
-// =============================================
-// INISIALISASI APLIKASI
-// =============================================
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Initializing application...');
-    
-    // Cek koneksi backend
-    await checkBackendConnection();
-    
-    // Load products
-    await loadProducts();
-    updateCart();
-    
-    // Event listeners
-    document.querySelectorAll('.category-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            currentCategory = button.getAttribute('data-category');
-            displayProducts();
+        console.error('❌ Error in PUT /api/orders:', error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
-    });
-
-    // Event listener untuk form tambah produk - PASTIKAN INI ADA
-    document.getElementById('addProductForm').addEventListener('submit', addProduct);
-
-    // ... (Event listeners lainnya tetap sama)
+    }
 });
+
+// ===== ADMIN ROUTES =====
+app.post('/api/admin/login', (req, res) => {
+    try {
+        console.log('🔐 POST /api/admin/login called');
+        
+        const { username, password } = req.body;
+        
+        if (username === 'admin' && password === 'lvime2025') {
+            res.json({
+                success: true,
+                message: 'Login successful'
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                error: 'Invalid credentials'
+            });
+        }
+    } catch (error) {
+        console.error('❌ Error in POST /api/admin/login:', error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Health check endpoint
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Las Valkyrie API is running!',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'production',
+        version: '2.0.0',
+        database: {
+            status: isMongoConnected() ? 'connected' : 'disconnected',
+            name: 'las_valkyrie'
+        }
+    });
+});
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+    res.status(200).send();
+});
+
+// Handle 404
+app.use('*', (req, res) => {
+    console.log('❌ 404 Route not found:', req.originalUrl);
+    res.status(404).json({
+        success: false,
+        error: 'Route not found: ' + req.originalUrl
+    });
+});
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+    console.error('🚨 Server Error:', error);
+    res.status(500).json({
+        success: false,
+        error: 'Internal server error: ' + error.message
+    });
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📍 Health check: http://localhost:${PORT}/`);
+    console.log(`📍 MongoDB Status: ${isMongoConnected() ? 'Connected' : 'Disconnected'}`);
+    console.log(`📍 Database: las_valkyrie`);
+});
+
+module.exports = app;
