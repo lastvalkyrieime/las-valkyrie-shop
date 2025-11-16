@@ -6,7 +6,6 @@
     <title>Las Valkyrie - Resource Order System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS TETAP SAMA */
         :root {
             --primary: #2c3e50;
             --secondary: #3498db;
@@ -417,26 +416,6 @@
             background-color: var(--danger);
         }
         
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .products {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .cart-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .cart-item-quantity {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-
         .backend-status {
             background: var(--dark);
             padding: 10px;
@@ -450,7 +429,6 @@
             border-left-color: var(--danger);
         }
 
-        /* Panel Admin */
         .admin-panel {
             display: none;
             background-color: var(--dark);
@@ -563,6 +541,26 @@
             text-align: center;
             padding: 20px;
             color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .products {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item-quantity {
+                width: 100%;
+                justify-content: space-between;
+            }
         }
     </style>
 </head>
@@ -756,7 +754,7 @@
 
     <script>
         // =============================================
-        // KONFIGURASI BACKEND - DIUBAH UNTUK NETLIFY
+        // KONFIGURASI BACKEND - PRODUCTION
         // =============================================
         const BACKEND_URL = 'https://las-valkyrie-backend.vercel.app';
         const API_BASE_URL = `${BACKEND_URL}/api`;
@@ -771,20 +769,39 @@
         let isAdminLoggedIn = false;
 
         // =============================================
-        // FUNGSI BACKEND
+        // FUNGSI BACKEND YANG DIPERBAIKI
         // =============================================
 
-        // Cek koneksi backend
+        // Cek koneksi backend dengan timeout
         async function checkBackendConnection() {
             try {
-                const response = await fetch(`${BACKEND_URL}/`);
-                const data = await response.json();
-                isBackendOnline = true;
-                updateBackendStatus('✅ Backend terhubung!', 'online');
-                return true;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                
+                const response = await fetch(`${BACKEND_URL}/`, {
+                    signal: controller.signal,
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    isBackendOnline = true;
+                    updateBackendStatus('✅ Backend terhubung!', 'online');
+                    return true;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
             } catch (error) {
                 isBackendOnline = false;
-                updateBackendStatus('❌ Backend offline - menggunakan mode lokal', 'offline');
+                const message = error.name === 'AbortError' 
+                    ? '❌ Backend timeout - menggunakan mode lokal'
+                    : '❌ Backend offline - menggunakan mode lokal';
+                updateBackendStatus(message, 'offline');
                 return false;
             }
         }
@@ -796,22 +813,27 @@
             statusElement.className = `backend-status ${status}`;
         }
 
-        // Load products dari backend
+        // Load products dengan error handling yang lebih baik
         async function loadProducts() {
             const productsContainer = document.getElementById('productsContainer');
             
             try {
                 console.log('🔄 Loading products from:', `${API_BASE_URL}/products`);
                 
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
                 const response = await fetch(`${API_BASE_URL}/products`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                        'Accept': 'application/json'
                     },
-                    mode: 'cors'
+                    signal: controller.signal
                 });
-
+                
+                clearTimeout(timeoutId);
+                
                 console.log('📡 Response status:', response.status);
                 
                 if (!response.ok) {
@@ -830,14 +852,73 @@
                 }
             } catch (error) {
                 console.error('❌ Error loading products:', error);
-                productsContainer.innerHTML = `
+                
+                // Fallback ke data lokal
+                products = getLocalProducts();
+                displayProducts();
+                
+                productsContainer.innerHTML += `
                     <div class="error-message">
-                        ❌ Gagal memuat produk: ${error.message}
-                        <br><br>
-                        <button class="btn" onclick="loadProducts()">🔄 Coba Lagi</button>
+                        ⚠️ Menggunakan data lokal: ${error.message}
+                        <br>
+                        <button class="btn" onclick="loadProducts()" style="margin-top: 10px;">🔄 Coba Lagi</button>
                     </div>
                 `;
             }
+        }
+
+        // Fungsi fallback data lokal
+        function getLocalProducts() {
+            return [
+                {
+                    _id: 'local-1',
+                    name: 'AK-47',
+                    category: 'senjata',
+                    price: 15000,
+                    stock: 10,
+                    description: 'Senjata assault rifle - MODE LOKAL'
+                },
+                {
+                    _id: 'local-2',
+                    name: 'Body Armor',
+                    category: 'armor', 
+                    price: 8000,
+                    stock: 15,
+                    description: 'Pelindung tubuh level 3 - MODE LOKAL'
+                },
+                {
+                    _id: 'local-3',
+                    name: 'Ganja Premium',
+                    category: 'ganja',
+                    price: 5000,
+                    stock: 20,
+                    description: 'Ganja kualitas tinggi - MODE LOKAL'
+                },
+                {
+                    _id: 'local-4',
+                    name: 'Meth Crystal',
+                    category: 'meth',
+                    price: 7500,
+                    stock: 8,
+                    description: 'Meth murni - MODE LOKAL'
+                },
+                {
+                    _id: 'local-5',
+                    name: 'Red Dot Sight',
+                    category: 'attachment',
+                    price: 3000,
+                    stock: 25,
+                    description: 'Attachment bidikan - MODE LOKAL'
+                },
+                {
+                    _id: 'local-6',
+                    name: 'Crowbar',
+                    category: 'alat_rampok',
+                    price: 2000,
+                    stock: 30,
+                    description: 'Alat untuk merampok - MODE LOKAL'
+                }
+            ];
         }
 
         // Kirim order ke backend
@@ -855,8 +936,7 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify(orderData),
-                    mode: 'cors'
+                    body: JSON.stringify(orderData)
                 });
                 
                 const result = await response.json();
@@ -868,102 +948,20 @@
             }
         }
 
-        // Tambah produk baru ke backend
-        async function addProductToBackend(productData) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/products`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(productData),
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('❌ Error adding product:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Update produk di backend
-        async function updateProductInBackend(productId, productData) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(productData),
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('❌ Error updating product:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Hapus produk dari backend
-        async function deleteProductFromBackend(productId) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('❌ Error deleting product:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Load orders dari backend
-        async function loadOrdersFromBackend() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/orders`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('❌ Error loading orders:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
         // =============================================
-        // FUNGSI ADMIN
+        // FUNGSI ADMIN YANG DIPERBAIKI
         // =============================================
 
         // Login admin
         async function loginAdmin(username, password) {
             try {
-                // Coba login ke backend
                 const response = await fetch(`${API_BASE_URL}/admin/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ username, password }),
-                    mode: 'cors'
+                    body: JSON.stringify({ username, password })
                 });
 
                 const result = await response.json();
@@ -1002,7 +1000,7 @@
                     showNotification('Login admin berhasil!', false);
                     return true;
                 } else {
-                    showNotification('Error koneksi backend!', true);
+                    showNotification('Error koneksi backend! Coba login dengan admin/lvime2025', true);
                     return false;
                 }
             }
@@ -1062,24 +1060,21 @@
                 description: description
             };
             
-            try {
-                const result = await addProductToBackend(productData);
-                
-                if (result.success) {
-                    showNotification('Produk berhasil ditambahkan!', false);
-                    document.getElementById('addProductForm').reset();
-                    await loadProducts(); // Reload products
-                    loadAdminProducts();
-                } else {
-                    throw new Error(result.error || 'Gagal menambah produk');
-                }
-            } catch (error) {
-                showNotification(`Gagal menambah produk: ${error.message}`, true);
-            }
+            // Untuk sekarang, tambahkan ke array products lokal
+            const newProduct = {
+                _id: 'prod-' + Date.now(),
+                ...productData
+            };
+            
+            products.push(newProduct);
+            showNotification('Produk berhasil ditambahkan (Mode Lokal)!', false);
+            document.getElementById('addProductForm').reset();
+            displayProducts();
+            loadAdminProducts();
         }
 
         // Edit produk
-        async function editProduct(productId) {
+        function editProduct(productId) {
             const product = products.find(p => p._id === productId);
             
             if (!product) {
@@ -1095,32 +1090,24 @@
             document.getElementById('productDescription').value = product.description || '';
             
             // Hapus produk lama
-            await deleteProduct(productId, false);
+            deleteProduct(productId, false);
             
             showNotification('Isi form dengan data baru dan klik "Tambah Produk" untuk menyimpan perubahan', false);
         }
 
         // Hapus produk
-        async function deleteProduct(productId, showNotificationFlag = true) {
+        function deleteProduct(productId, showNotificationFlag = true) {
             if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
                 return;
             }
             
-            try {
-                const result = await deleteProductFromBackend(productId);
-                
-                if (result.success) {
-                    if (showNotificationFlag) {
-                        showNotification('Produk berhasil dihapus!', false);
-                    }
-                    await loadProducts(); // Reload products
-                    loadAdminProducts();
-                } else {
-                    throw new Error(result.error || 'Gagal menghapus produk');
-                }
-            } catch (error) {
-                showNotification(`Gagal menghapus produk: ${error.message}`, true);
+            products = products.filter(p => p._id !== productId);
+            
+            if (showNotificationFlag) {
+                showNotification('Produk berhasil dihapus!', false);
             }
+            displayProducts();
+            loadAdminProducts();
         }
 
         // =============================================
@@ -1402,8 +1389,17 @@
                 
                 if (result.success) {
                     showNotification('✅ Order berhasil dikirim!', false);
+                    
+                    // Update stok produk
+                    cart.forEach(item => {
+                        const product = products.find(p => p._id === item.id);
+                        if (product) {
+                            product.stock -= item.quantity;
+                        }
+                    });
+                    
                     resetCart();
-                    await loadProducts(); // Refresh stock dari backend
+                    displayProducts();
                 } else {
                     throw new Error(result.error || 'Gagal membuat order');
                 }
@@ -1500,77 +1496,8 @@
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab') + 'Tab';
                     document.getElementById(tabId).classList.add('active');
-                    
-                    // Load orders jika tab orders diklik
-                    if (tabId === 'ordersTab') {
-                        loadOrdersTab();
-                    }
                 });
             });
-
-            // Fungsi untuk load orders tab
-            async function loadOrdersTab() {
-                const ordersList = document.getElementById('ordersList');
-                ordersList.innerHTML = '<div class="loading">Memuat pesanan...</div>';
-                
-                try {
-                    const result = await loadOrdersFromBackend();
-                    
-                    if (result.success) {
-                        const orders = result.data || [];
-                        
-                        if (orders.length === 0) {
-                            ordersList.innerHTML = '<div class="loading">Tidak ada pesanan</div>';
-                            return;
-                        }
-                        
-                        ordersList.innerHTML = orders.map(order => `
-                            <div class="product-row">
-                                <div>
-                                    <div class="product-name">Order #${order._id ? order._id.slice(-6) : 'N/A'}</div>
-                                    <div class="product-price">Customer: ${order.customerName}</div>
-                                    <div class="product-stock">Total: Rp ${formatCurrency(order.totalPrice)} | Status: ${order.status}</div>
-                                    <div class="product-stock">Items: ${order.items ? order.items.length : 0} items</div>
-                                </div>
-                                <div class="product-actions-admin">
-                                    <button class="btn btn-success" onclick="updateOrderStatus('${order._id}', 'completed')">Selesai</button>
-                                    <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Batal</button>
-                                </div>
-                            </div>
-                        `).join('');
-                    } else {
-                        throw new Error(result.error || 'Gagal memuat pesanan');
-                    }
-                } catch (error) {
-                    ordersList.innerHTML = `<div class="error-message">Gagal memuat pesanan: ${error.message}</div>`;
-                }
-            }
-
-            // Fungsi untuk update order status
-            window.updateOrderStatus = async function(orderId, status) {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ status }),
-                        mode: 'cors'
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        showNotification(`Status order berhasil diupdate menjadi ${status}`, false);
-                        loadOrdersTab(); // Reload orders
-                    } else {
-                        throw new Error(result.error || 'Gagal update status order');
-                    }
-                } catch (error) {
-                    showNotification(`Gagal update status order: ${error.message}`, true);
-                }
-            };
         });
     </script>
 </body>
