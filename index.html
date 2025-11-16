@@ -104,6 +104,8 @@
             border: none;
             border-radius: 5px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
         }
 
         button {
@@ -124,6 +126,14 @@
         button:disabled {
             background: #6c757d;
             cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #4ecdc4;
+        }
+
+        .btn-secondary:hover {
+            background: #67e6dc;
         }
 
         .cart-section {
@@ -162,19 +172,46 @@
             color: white;
             font-weight: bold;
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .notification.error { background: #ff6b6b; }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .notification.error {
+            background: #ff6b6b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+            font-size: 1.1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🔫 Las Valkyrie - Toko</h1>
-            <button onclick="logout()">Kembali ke Login</button>
+            <button class="btn-secondary" onclick="logout()">Kembali ke Login</button>
         </div>
 
         <div class="products-grid" id="productsGrid">
-            <div>Memuat produk...</div>
+            <div class="loading">🔄 Memuat produk...</div>
         </div>
 
         <div class="cart-section">
@@ -187,9 +224,10 @@
         </div>
     </div>
 
-    <div id="notification" class="notification hidden"></div>
+    <div id="notification" class="notification"></div>
 
     <script>
+        // Konfigurasi API - Ganti dengan URL backend Anda
         const API_BASE_URL = 'https://las-valkyrie-backend.vercel.app/api';
         let cart = [];
 
@@ -200,17 +238,58 @@
             window.location.href = 'index.html';
         }
 
-        // Load products
+        // Show notification
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${isError ? 'error' : ''} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Load products dengan error handling
         async function loadProducts() {
             try {
-                const response = await fetch(`${API_BASE_URL}/products`);
-                if (!response.ok) throw new Error('Gagal memuat produk');
+                const grid = document.getElementById('productsGrid');
+                grid.innerHTML = '<div class="loading">🔄 Memuat produk...</div>';
+
+                console.log('Fetching products from:', `${API_BASE_URL}/products`);
+                
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
                 const result = await response.json();
-                displayProducts(result.data || []);
+                console.log('Products data:', result);
+                
+                if (result.success) {
+                    displayProducts(result.data || []);
+                } else {
+                    throw new Error(result.error || 'Gagal memuat produk');
+                }
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('productsGrid').innerHTML = '<p>Error memuat produk</p>';
+                console.error('Error loading products:', error);
+                const grid = document.getElementById('productsGrid');
+                grid.innerHTML = `
+                    <div class="error-message">
+                        ❌ Gagal memuat produk: ${error.message}
+                        <br><br>
+                        <button onclick="loadProducts()">Coba Lagi</button>
+                    </div>
+                `;
+                showNotification('Gagal memuat produk', true);
             }
         }
 
@@ -218,7 +297,7 @@
             const grid = document.getElementById('productsGrid');
             
             if (!products || products.length === 0) {
-                grid.innerHTML = '<p>Tidak ada produk tersedia</p>';
+                grid.innerHTML = '<div class="loading">😔 Tidak ada produk tersedia</div>';
                 return;
             }
 
@@ -228,30 +307,55 @@
                     <div class="product-category">${getCategoryLabel(product.category)}</div>
                     <div class="product-price">${formatCurrency(product.price)}</div>
                     <div class="product-stock">Stok: ${product.stock}</div>
-                    <div class="product-description">${product.description || '-'}</div>
+                    <div class="product-description">${product.description || 'Tidak ada deskripsi'}</div>
                     <div class="order-controls">
-                        <input type="number" id="qty-${product._id}" min="1" max="${product.stock}" value="1" placeholder="Qty">
+                        <input type="number" 
+                               id="qty-${product._id}" 
+                               min="1" 
+                               max="${product.stock}" 
+                               value="1" 
+                               placeholder="Qty"
+                               onchange="validateQuantity('${product._id}', ${product.stock})">
                         <button onclick="addToCart('${product._id}', '${product.name}', ${product.price})" 
                                 ${product.stock === 0 ? 'disabled' : ''}>
-                            ${product.stock === 0 ? 'Habis' : 'Tambah'}
+                            ${product.stock === 0 ? '😔 Habis' : '🛒 Tambah'}
                         </button>
                     </div>
                 </div>
             `).join('');
         }
 
+        function validateQuantity(productId, maxStock) {
+            const input = document.getElementById(`qty-${productId}`);
+            let value = parseInt(input.value);
+            
+            if (value < 1) value = 1;
+            if (value > maxStock) value = maxStock;
+            
+            input.value = value;
+        }
+
         function getCategoryEmoji(category) {
             const emojis = {
-                'senjata': '🔫', 'peluru': '📦', 'armor': '🦺', 
-                'attachment': '⚙️', 'ganja': '🌿', 'meth': '💊', 'alat_rampok': '🔧'
+                'senjata': '🔫', 
+                'peluru': '📦', 
+                'armor': '🦺', 
+                'attachment': '⚙️', 
+                'ganja': '🌿', 
+                'meth': '💊', 
+                'alat_rampok': '🔧'
             };
             return emojis[category] || '📦';
         }
 
         function getCategoryLabel(category) {
             const labels = {
-                'senjata': 'Senjata', 'peluru': 'Amunisi', 'armor': 'Armor',
-                'attachment': 'Attachment', 'ganja': 'Ganja', 'meth': 'Meth',
+                'senjata': 'Senjata', 
+                'peluru': 'Amunisi', 
+                'armor': 'Armor',
+                'attachment': 'Attachment', 
+                'ganja': 'Ganja', 
+                'meth': 'Meth',
                 'alat_rampok': 'Alat Rampok'
             };
             return labels[category] || category;
@@ -269,6 +373,11 @@
             const qtyInput = document.getElementById(`qty-${productId}`);
             const quantity = parseInt(qtyInput.value) || 1;
 
+            if (quantity < 1) {
+                showNotification('Jumlah harus minimal 1', true);
+                return;
+            }
+
             const existingItem = cart.find(item => item.productId === productId);
             if (existingItem) {
                 existingItem.quantity += quantity;
@@ -282,7 +391,7 @@
             }
 
             updateCartDisplay();
-            showNotification(`${productName} ditambahkan ke keranjang`);
+            showNotification(`✅ ${productName} (${quantity}x) ditambahkan ke keranjang`);
             qtyInput.value = 1;
         }
 
@@ -292,20 +401,26 @@
             const checkoutBtn = document.getElementById('checkoutBtn');
 
             if (cart.length === 0) {
-                cartItems.innerHTML = '<p>Keranjang kosong</p>';
+                cartItems.innerHTML = '<p>😴 Keranjang kosong</p>';
                 cartTotal.classList.add('hidden');
                 checkoutBtn.classList.add('hidden');
                 return;
             }
 
             let total = 0;
-            cartItems.innerHTML = cart.map(item => {
+            cartItems.innerHTML = cart.map((item, index) => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 return `
                     <div class="cart-item">
-                        <div>${item.productName} (${item.quantity}x)</div>
-                        <div>${formatCurrency(itemTotal)}</div>
+                        <div>
+                            <strong>${item.productName}</strong><br>
+                            <small>${item.quantity} x ${formatCurrency(item.price)}</small>
+                        </div>
+                        <div>
+                            <strong>${formatCurrency(itemTotal)}</strong><br>
+                            <button onclick="removeFromCart(${index})" style="padding: 2px 8px; font-size: 10px;">❌</button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -315,47 +430,64 @@
             checkoutBtn.classList.remove('hidden');
         }
 
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+            showNotification('Item dihapus dari keranjang');
+        }
+
         async function checkout() {
-            const customerName = prompt('Masukkan nama Anda:');
-            if (!customerName) return;
+            if (cart.length === 0) {
+                showNotification('Keranjang kosong!', true);
+                return;
+            }
+
+            const customerName = prompt('Masukkan nama Anda untuk order:');
+            if (!customerName) {
+                showNotification('Order dibatalkan', true);
+                return;
+            }
+
+            if (customerName.length < 2) {
+                showNotification('Nama harus minimal 2 karakter', true);
+                return;
+            }
 
             try {
                 const orderData = {
-                    customerName,
+                    customerName: customerName.trim(),
                     items: cart,
                     totalPrice: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                     status: 'pending'
                 };
 
+                console.log('Sending order:', orderData);
+
                 const response = await fetch(`${API_BASE_URL}/orders`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData)
+                    headers: { 
+                        'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(orderData),
+                    mode: 'cors'
                 });
 
-                if (response.ok) {
-                    showNotification('Order berhasil dibuat!');
+                const result = await response.json();
+                console.log('Order response:', result);
+
+                if (response.ok && result.success) {
+                    showNotification('🎉 Order berhasil dibuat! Terima kasih.');
                     cart = [];
                     updateCartDisplay();
-                    loadProducts(); // Refresh stock
+                    await loadProducts(); // Refresh stock
                 } else {
-                    throw new Error('Gagal membuat order');
+                    throw new Error(result.error || 'Gagal membuat order');
                 }
             } catch (error) {
                 console.error('Checkout error:', error);
-                showNotification('Gagal membuat order', true);
+                showNotification(`❌ Gagal membuat order: ${error.message}`, true);
             }
-        }
-
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${isError ? 'error' : ''}`;
-            notification.classList.remove('hidden');
-            
-            setTimeout(() => {
-                notification.classList.add('hidden');
-            }, 3000);
         }
 
         function logout() {
@@ -363,8 +495,25 @@
             window.location.href = 'index.html';
         }
 
+        // Test koneksi saat load
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (response.ok) {
+                    console.log('✅ Backend connected successfully');
+                } else {
+                    console.error('❌ Backend connection failed');
+                }
+            } catch (error) {
+                console.error('❌ Backend connection error:', error);
+            }
+        }
+
         // Load products on page load
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', function() {
+            testConnection();
+            loadProducts();
+        });
     </script>
 </body>
 </html>
