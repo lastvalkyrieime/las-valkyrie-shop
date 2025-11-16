@@ -488,10 +488,7 @@ async function processCheckout() {
         return;
     }
     
-    if (!discordId) {
-        showAlert('Harap isi Discord ID', 'warning');
-        return;
-    }
+    // Discord ID is optional, no validation needed
     
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
@@ -820,7 +817,7 @@ function displayAdminOrders(orders) {
                             <span class="badge ${getStatusBadgeClass(order.status)}">${order.status}</span>
                         </div>
                         <p class="mb-1"><strong>Customer:</strong> ${escapeHtml(order.customerName)}</p>
-                        <p class="mb-1"><strong>Discord:</strong> ${escapeHtml(order.discordId)}</p>
+                        <p class="mb-1"><strong>Discord:</strong> ${order.discordId ? escapeHtml(order.discordId) : 'Tidak ada'}</p>
                         <p class="mb-1"><strong>Total:</strong> $${order.totalPrice}</p>
                         <p class="mb-2"><strong>Tanggal:</strong> ${new Date(order.createdAt).toLocaleString('id-ID')}</p>
                         
