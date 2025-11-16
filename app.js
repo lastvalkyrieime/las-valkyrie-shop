@@ -1,13 +1,5 @@
 const API_BASE = 'https://las-valkyrie-backend.vercel.app';
 
-// Fallback API base jika utama bermasalah
-const API_FALLBACKS = [
-    'https://las-valkyrie-backend.vercel.app',
-    'https://las-valkyrie-backend-a48adkgxw-lastvalkyrieimes-projects.vercel.app',
-    'http://localhost:3001'
-];
-
-let currentAPIBase = API_BASE;
 let products = [];
 let cart = [];
 let isAdminLoggedIn = false;
@@ -16,9 +8,8 @@ let editingProductId = null;
 // DOM Ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Las Valkyrie Frontend Started');
-    console.log('📍 API Base:', currentAPIBase);
+    console.log('📍 API Base:', API_BASE);
     
-    // Update connection status
     updateConnectionStatus('connecting');
     
     // Test connection pertama kali
@@ -31,7 +22,45 @@ document.addEventListener('DOMContentLoaded', function() {
             updateConnectionStatus('disconnected');
         }
     });
+
+    // Initialize logout button
+    initLogoutButton();
 });
+
+// Initialize logout button
+function initLogoutButton() {
+    const logoutBtn = document.getElementById('logout-btn');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+    
+    if (logoutBtn) {
+        logoutBtn.classList.add('d-none');
+    }
+    if (adminLogoutBtn) {
+        adminLogoutBtn.classList.add('d-none');
+    }
+}
+
+// Update logout button visibility
+function updateLogoutButton() {
+    const logoutBtn = document.getElementById('logout-btn');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+    
+    if (logoutBtn) {
+        if (isAdminLoggedIn) {
+            logoutBtn.classList.remove('d-none');
+        } else {
+            logoutBtn.classList.add('d-none');
+        }
+    }
+    
+    if (adminLogoutBtn) {
+        if (isAdminLoggedIn) {
+            adminLogoutBtn.classList.remove('d-none');
+        } else {
+            adminLogoutBtn.classList.add('d-none');
+        }
+    }
+}
 
 // Update connection status indicator
 function updateConnectionStatus(status) {
@@ -40,34 +69,26 @@ function updateConnectionStatus(status) {
         switch(status) {
             case 'connected':
                 statusElement.innerHTML = '<i class="fas fa-wifi"></i> Connected';
-                statusElement.className = 'badge bg-success ms-2';
+                statusElement.className = 'connection-status text-success';
                 break;
             case 'connecting':
                 statusElement.innerHTML = '<i class="fas fa-sync fa-spin"></i> Connecting';
-                statusElement.className = 'badge bg-warning ms-2';
+                statusElement.className = 'connection-status text-warning';
                 break;
             case 'disconnected':
                 statusElement.innerHTML = '<i class="fas fa-unlink"></i> Disconnected';
-                statusElement.className = 'badge bg-danger ms-2';
+                statusElement.className = 'connection-status text-danger';
                 break;
         }
     }
 }
 
-// Fungsi test koneksi dengan fallback
+// Test connection
 async function testConnection() {
-    console.log('🔌 Testing connection to:', currentAPIBase);
+    console.log('🔌 Testing connection to:', API_BASE);
     
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
-        
-        const response = await fetch(currentAPIBase + '/', {
-            signal: controller.signal,
-            method: 'GET'
-        });
-        
-        clearTimeout(timeoutId);
+        const response = await fetch(API_BASE + '/');
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -79,60 +100,26 @@ async function testConnection() {
         return true;
         
     } catch (error) {
-        console.error('❌ Connection failed to', currentAPIBase, 'Error:', error);
-        
-        // Coba fallback URLs
-        for (const fallbackUrl of API_FALLBACKS) {
-            if (fallbackUrl !== currentAPIBase) {
-                console.log('🔄 Trying fallback:', fallbackUrl);
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-                    
-                    const response = await fetch(fallbackUrl + '/', {
-                        signal: controller.signal,
-                        method: 'GET'
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (response.ok) {
-                        currentAPIBase = fallbackUrl;
-                        console.log('✅ Fallback connection successful:', fallbackUrl);
-                        showAlert(`✅ Terhubung ke server (fallback)`, 'success', 3000);
-                        return true;
-                    }
-                } catch (fallbackError) {
-                    console.log('❌ Fallback failed:', fallbackUrl, fallbackError);
-                }
-            }
-        }
-        
-        showAlert('❌ Tidak dapat terhubung ke server. Mode offline diaktifkan.', 'warning', 8000);
+        console.error('❌ Connection failed:', error);
+        showAlert('❌ Tidak dapat terhubung ke server. Mode offline diaktifkan.', 'warning', 5000);
         return false;
     }
 }
 
-// Generic fetch function dengan error handling
+// Generic fetch function
 async function apiFetch(endpoint, options = {}) {
-    const url = currentAPIBase + endpoint;
+    const url = API_BASE + endpoint;
     
-    console.log(`🌐 API Call: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 API Call: ${options.method || 'GET'} ${url}`, options.body ? JSON.parse(options.body) : '');
     
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        
         const response = await fetch(url, {
             ...options,
-            signal: controller.signal,
             headers: {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
         });
-        
-        clearTimeout(timeoutId);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -144,15 +131,6 @@ async function apiFetch(endpoint, options = {}) {
         
     } catch (error) {
         console.error(`❌ API Fetch Error (${endpoint}):`, error);
-        
-        if (error.name === 'AbortError') {
-            throw new Error('Timeout - server tidak merespons dalam 15 detik');
-        }
-        
-        if (error.message.includes('Failed to fetch')) {
-            throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
-        }
-        
         throw new Error(`Gagal terhubung: ${error.message}`);
     }
 }
@@ -175,33 +153,34 @@ function showSection(section) {
             document.getElementById('admin-dashboard').classList.remove('d-none');
             loadAdminProducts();
             loadAdminOrders();
+            loadStats();
         }
     }
+    updateLogoutButton();
 }
 
 // Product Management
 async function loadProducts() {
     try {
-        console.log('🔄 Loading products from:', currentAPIBase);
-        updateConnectionStatus('connecting');
+        console.log('🔄 Loading products from:', API_BASE);
         
         const result = await apiFetch('/api/products');
         
         if (result.success) {
             products = result.data || [];
             displayProducts(products);
-            updateConnectionStatus('connected');
             
             if (products.length === 0) {
                 showAlert('Tidak ada produk tersedia', 'info', 3000);
+            } else {
+                console.log(`✅ Loaded ${products.length} products`);
             }
         } else {
             throw new Error(result.error || 'Gagal memuat produk');
         }
     } catch (error) {
         console.error('❌ Error loading products:', error);
-        updateConnectionStatus('disconnected');
-        showAlert('Mode offline: Menggunakan data lokal', 'warning', 5000);
+        showAlert('Gagal memuat produk: ' + error.message, 'danger');
         
         // Fallback data
         products = getFallbackProducts();
@@ -235,30 +214,6 @@ function getFallbackProducts() {
             price: 5000,
             stock: 20,
             description: 'Ganja kualitas tinggi - OFFLINE MODE'
-        },
-        {
-            _id: 'fallback_4',
-            name: 'M4A1',
-            category: 'senjata',
-            price: 18000,
-            stock: 8,
-            description: 'Senjata assault rifle modern - OFFLINE MODE'
-        },
-        {
-            _id: 'fallback_5',
-            name: 'Meth Blue',
-            category: 'meth',
-            price: 12000,
-            stock: 25,
-            description: 'Methamphetamine kualitas premium - OFFLINE MODE'
-        },
-        {
-            _id: 'fallback_6',
-            name: 'Drill Machine',
-            category: 'alat rampok',
-            price: 7000,
-            stock: 5,
-            description: 'Alat untuk membuka brankas - OFFLINE MODE'
         }
     ];
 }
@@ -312,7 +267,7 @@ function displayProducts(productsToDisplay) {
                             </div>
                         </div>
                         ${product.stock === 0 ? '<small class="text-danger">Stok habis</small>' : ''}
-                        ${product._id.includes('fallback') ? '<small class="text-warning"><i class="fas fa-wifi-slash"></i> Offline Mode</small>' : ''}
+                        ${product._id && product._id.includes('fallback') ? '<small class="text-warning"><i class="fas fa-wifi-slash"></i> Offline Mode</small>' : ''}
                     </div>
                 </div>
             </div>
@@ -417,6 +372,19 @@ function updateCartQuantity(productId, change) {
             item.quantity = newQuantity;
             updateCartDisplay();
         }
+    }
+}
+
+function clearCart() {
+    if (cart.length === 0) {
+        showAlert('Keranjang sudah kosong', 'info');
+        return;
+    }
+    
+    if (confirm('Apakah Anda yakin ingin mengosongkan keranjang?')) {
+        cart = [];
+        updateCartDisplay();
+        showAlert('Keranjang berhasil dikosongkan', 'success');
     }
 }
 
@@ -553,6 +521,12 @@ async function processCheckout() {
             updateCartDisplay();
             const modal = bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
             modal.hide();
+            
+            // Refresh orders if in admin mode
+            if (isAdminLoggedIn) {
+                loadAdminOrders();
+                loadStats();
+            }
         } else {
             throw new Error(result.error || 'Gagal membuat pesanan');
         }
@@ -590,6 +564,8 @@ async function adminLogin() {
             document.getElementById('admin-dashboard').classList.remove('d-none');
             loadAdminProducts();
             loadAdminOrders();
+            loadStats();
+            updateLogoutButton();
             showAlert('✅ Login admin berhasil!', 'success');
         } else {
             throw new Error(result.error || 'Login gagal');
@@ -601,10 +577,13 @@ async function adminLogin() {
 }
 
 function adminLogout() {
-    isAdminLoggedIn = false;
-    document.getElementById('admin-login').classList.remove('d-none');
-    document.getElementById('admin-dashboard').classList.add('d-none');
-    showAlert('Anda telah logout', 'info');
+    if (confirm('Apakah Anda yakin ingin logout?')) {
+        isAdminLoggedIn = false;
+        document.getElementById('admin-login').classList.remove('d-none');
+        document.getElementById('admin-dashboard').classList.add('d-none');
+        updateLogoutButton();
+        showAlert('Anda telah logout', 'info');
+    }
 }
 
 async function loadAdminProducts() {
@@ -670,8 +649,8 @@ function displayAdminProducts(productsList) {
 
 function showAddProductModal() {
     editingProductId = null;
-    document.getElementById('productModalTitle').textContent = 'Tambah Produk Baru';
-    document.getElementById('productModalButton').textContent = 'Simpan';
+    document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-plus"></i> Tambah Produk Baru';
+    document.getElementById('productModalButton').innerHTML = '<i class="fas fa-save"></i> Simpan';
     document.getElementById('productModalButton').onclick = saveProduct;
     
     // Clear form
@@ -693,8 +672,8 @@ function editProduct(productId) {
     }
     
     editingProductId = productId;
-    document.getElementById('productModalTitle').textContent = 'Edit Produk';
-    document.getElementById('productModalButton').textContent = 'Update';
+    document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Produk';
+    document.getElementById('productModalButton').innerHTML = '<i class="fas fa-save"></i> Update';
     document.getElementById('productModalButton').onclick = saveProduct;
     
     document.getElementById('product-name').value = product.name;
@@ -756,11 +735,19 @@ async function saveProduct() {
             body: JSON.stringify(productData)
         });
         
+        console.log('✅ Save product response:', result);
+        
         if (result.success) {
             showAlert(editingProductId ? '✅ Produk berhasil diupdate!' : '✅ Produk berhasil ditambahkan!', 'success');
-            document.getElementById('productModal').querySelector('.btn-close').click();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            modal.hide();
+            
+            // Refresh data
             loadProducts();
             loadAdminProducts();
+            loadStats();
         } else {
             throw new Error(result.error || 'Gagal menyimpan produk');
         }
@@ -784,6 +771,7 @@ async function deleteProduct(productId) {
             showAlert('✅ Produk berhasil dihapus!', 'success');
             loadProducts();
             loadAdminProducts();
+            loadStats();
         } else {
             throw new Error(result.error || 'Gagal menghapus produk');
         }
@@ -886,12 +874,44 @@ async function updateOrderStatus(orderId, status) {
         if (result.success) {
             showAlert('✅ Status pesanan berhasil diupdate!', 'success');
             loadAdminOrders();
+            loadStats();
         } else {
             throw new Error(result.error || 'Gagal update status');
         }
     } catch (error) {
         console.error('❌ Update order status error:', error);
         showAlert('❌ Gagal update status: ' + error.message, 'danger');
+    }
+}
+
+// Statistics
+async function loadStats() {
+    try {
+        console.log('📊 Loading statistics...');
+        
+        // Load products count
+        const productsResult = await apiFetch('/api/products');
+        const totalProducts = productsResult.success ? productsResult.data.length : 0;
+        document.getElementById('stats-total-products').textContent = totalProducts;
+        
+        // Load orders count
+        const ordersResult = await apiFetch('/api/orders');
+        if (ordersResult.success) {
+            const totalOrders = ordersResult.data.length;
+            const pendingOrders = ordersResult.data.filter(order => order.status === 'pending').length;
+            
+            document.getElementById('stats-total-orders').textContent = totalOrders;
+            document.getElementById('stats-pending-orders').textContent = pendingOrders;
+        } else {
+            document.getElementById('stats-total-orders').textContent = '0';
+            document.getElementById('stats-pending-orders').textContent = '0';
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading statistics:', error);
+        document.getElementById('stats-total-products').textContent = '0';
+        document.getElementById('stats-total-orders').textContent = '0';
+        document.getElementById('stats-pending-orders').textContent = '0';
     }
 }
 
@@ -930,18 +950,3 @@ function escapeHtml(unsafe) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-// Initialize connection status indicator
-function initConnectionStatus() {
-    const navbar = document.querySelector('.navbar-brand');
-    if (navbar && !document.getElementById('connection-status')) {
-        const statusSpan = document.createElement('span');
-        statusSpan.id = 'connection-status';
-        statusSpan.className = 'badge bg-secondary ms-2';
-        statusSpan.innerHTML = '<i class="fas fa-sync fa-spin"></i> Connecting';
-        navbar.appendChild(statusSpan);
-    }
-}
-
-// Initialize
-initConnectionStatus();
