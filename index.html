@@ -30,20 +30,40 @@
             background: #0d6efd;
             color: white;
         }
+        .connection-status {
+            font-size: 0.8em;
+        }
+        .offline-badge {
+            font-size: 0.6em;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-shield-alt"></i> Las Valkyrie
+                <i class="fas fa-shield-alt"></i> 
+                <div>
+                    <div>Las Valkyrie</div>
+                    <small class="connection-status" id="connection-status">
+                        <i class="fas fa-sync fa-spin"></i> Connecting...
+                    </small>
+                </div>
             </a>
             <div class="navbar-nav ms-auto">
                 <button class="btn btn-outline-light me-2" onclick="showSection('products')">
                     <i class="fas fa-store"></i> Belanja
                 </button>
-                <button class="btn btn-outline-light" onclick="showSection('admin')">
+                <button class="btn btn-outline-light me-2" onclick="showSection('admin')">
                     <i class="fas fa-user-cog"></i> Admin
+                </button>
+                <button class="btn btn-outline-warning d-none" id="logout-btn" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
         </div>
@@ -52,46 +72,79 @@
     <div class="container mt-4">
         <!-- Products Section -->
         <div id="products-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-store"></i> Toko Resources</h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="testConnection()">
+                        <i class="fas fa-wifi"></i> Test Connection
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="loadProducts()">
+                        <i class="fas fa-redo"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select id="categoryFilter" class="form-select" onchange="filterProducts()">
+                        <option value="">Semua Kategori</option>
+                        <option value="senjata">Senjata</option>
+                        <option value="amunisi">Amunisi</option>
+                        <option value="armor">Armor</option>
+                        <option value="attachment">Attachment</option>
+                        <option value="ganja">Ganja</option>
+                        <option value="meth">Meth</option>
+                        <option value="alat rampok">Alat Rampok</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="searchProduct" class="form-control" placeholder="Cari produk...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="filterProducts()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row">
                 <div class="col-md-8">
-                    <h2><i class="fas fa-store"></i> Toko Resources</h2>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <select id="categoryFilter" class="form-select" onchange="filterProducts()">
-                                <option value="">Semua Kategori</option>
-                                <option value="senjata">Senjata</option>
-                                <option value="amunisi">Amunisi</option>
-                                <option value="armor">Armor</option>
-                                <option value="attachment">Attachment</option>
-                                <option value="ganja">Ganja</option>
-                                <option value="meth">Meth</option>
-                                <option value="alat rampok">Alat Rampok</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="searchProduct" class="form-control" placeholder="Cari produk..." onkeyup="filterProducts()">
-                        </div>
-                    </div>
-                    
                     <div id="products-container" class="row">
                         <!-- Products will be loaded here -->
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary mb-3" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p>Memuat produk...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fas fa-shopping-cart"></i> Keranjang Belanja</h5>
+                    <div class="card sticky-top" style="top: 20px;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Keranjang Belanja</h5>
                         </div>
                         <div class="card-body">
                             <div id="cart-items">
-                                <p class="text-muted">Keranjang kosong</p>
+                                <div class="text-center py-3">
+                                    <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">Keranjang kosong</p>
+                                </div>
                             </div>
                             <div id="cart-total" class="d-none">
                                 <hr>
-                                <h5>Total: $<span id="total-price">0</span></h5>
-                                <button class="btn btn-primary w-100 mt-3" onclick="showCheckoutModal()">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Total:</h5>
+                                    <h4 class="mb-0 text-success">$<span id="total-price">0</span></h4>
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="showCheckoutModal()">
                                     <i class="fas fa-credit-card"></i> Checkout
+                                </button>
+                                <button class="btn btn-outline-danger w-100 mt-2" onclick="clearCart()">
+                                    <i class="fas fa-trash"></i> Kosongkan Keranjang
                                 </button>
                             </div>
                         </div>
@@ -103,15 +156,25 @@
         <!-- Admin Section -->
         <div id="admin-section" class="d-none">
             <div class="admin-section">
-                <h2><i class="fas fa-user-cog"></i> Panel Admin</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-user-cog"></i> Panel Admin</h2>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="testConnection()">
+                            <i class="fas fa-wifi"></i> Test Connection
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm d-none" id="admin-logout-btn" onclick="adminLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
                 
                 <!-- Login Form -->
                 <div id="admin-login">
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Login Admin</h5>
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-sign-in-alt"></i> Login Admin</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
@@ -125,6 +188,12 @@
                                     <button class="btn btn-primary w-100" onclick="adminLogin()">
                                         <i class="fas fa-sign-in-alt"></i> Login
                                     </button>
+                                    <div class="mt-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle"></i> 
+                                            Default credentials: admin / lvime2025
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -133,34 +202,114 @@
 
                 <!-- Admin Dashboard -->
                 <div id="admin-dashboard" class="d-none">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#admin-products" data-bs-toggle="tab">Produk</a>
+                    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#admin-products" type="button" role="tab">
+                                <i class="fas fa-boxes"></i> Produk
+                            </button>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#admin-orders" data-bs-toggle="tab">Pesanan</a>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#admin-orders" type="button" role="tab">
+                                <i class="fas fa-receipt"></i> Pesanan
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#admin-stats" type="button" role="tab">
+                                <i class="fas fa-chart-bar"></i> Statistik
+                            </button>
                         </li>
                     </ul>
                     
                     <div class="tab-content mt-3">
                         <!-- Products Management -->
-                        <div class="tab-pane fade show active" id="admin-products">
+                        <div class="tab-pane fade show active" id="admin-products" role="tabpanel">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5>Manajemen Produk</h5>
-                                <button class="btn btn-success" onclick="showAddProductModal()">
-                                    <i class="fas fa-plus"></i> Tambah Produk
-                                </button>
+                                <h5><i class="fas fa-boxes"></i> Manajemen Produk</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-success" onclick="loadAdminProducts()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button class="btn btn-success" onclick="showAddProductModal()">
+                                        <i class="fas fa-plus"></i> Tambah Produk
+                                    </button>
+                                </div>
                             </div>
                             <div id="admin-products-list">
-                                <!-- Products list will be loaded here -->
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p>Memuat data produk...</p>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Orders Management -->
-                        <div class="tab-pane fade" id="admin-orders">
-                            <h5>Manajemen Pesanan</h5>
+                        <div class="tab-pane fade" id="admin-orders" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5><i class="fas fa-receipt"></i> Manajemen Pesanan</h5>
+                                <button class="btn btn-outline-success" onclick="loadAdminOrders()">
+                                    <i class="fas fa-redo"></i> Refresh
+                                </button>
+                            </div>
                             <div id="admin-orders-list">
-                                <!-- Orders list will be loaded here -->
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p>Memuat data pesanan...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="tab-pane fade" id="admin-stats" role="tabpanel">
+                            <h5><i class="fas fa-chart-bar"></i> Statistik Sistem</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-white bg-primary">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 id="stats-total-products">0</h4>
+                                                    <p class="mb-0">Total Produk</p>
+                                                </div>
+                                                <i class="fas fa-boxes fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-white bg-success">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 id="stats-total-orders">0</h4>
+                                                    <p class="mb-0">Total Pesanan</p>
+                                                </div>
+                                                <i class="fas fa-receipt fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-white bg-info">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 id="stats-pending-orders">0</h4>
+                                                    <p class="mb-0">Pending</p>
+                                                </div>
+                                                <i class="fas fa-clock fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button class="btn btn-primary" onclick="loadStats()">
+                                    <i class="fas fa-redo"></i> Muat Ulang Statistik
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -171,34 +320,49 @@
 
     <!-- Checkout Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Checkout Pesanan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-credit-card"></i> Checkout Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Customer *</label>
-                        <input type="text" id="customer-name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Discord ID *</label>
-                        <input type="text" id="discord-id" class="form-control" placeholder="contoh: username#1234" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Informasi Tambahan</label>
-                        <textarea id="additional-info" class="form-control" rows="3" placeholder="Catatan khusus untuk pesanan..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <h6>Ringkasan Pesanan:</h6>
-                        <div id="checkout-summary"></div>
-                        <hr>
-                        <h6>Total: $<span id="checkout-total">0</span></h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nama Customer *</label>
+                                <input type="text" id="customer-name" class="form-control" placeholder="Masukkan nama lengkap" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Discord ID *</label>
+                                <input type="text" id="discord-id" class="form-control" placeholder="contoh: username#1234" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Informasi Tambahan</label>
+                                <textarea id="additional-info" class="form-control" rows="3" placeholder="Catatan khusus untuk pesanan..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Ringkasan Pesanan:</h6>
+                            <div id="checkout-summary" class="mb-3"></div>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5>Total:</h5>
+                                <h4 class="text-success">$<span id="checkout-total">0</span></h4>
+                            </div>
+                            <div class="alert alert-info mt-3">
+                                <small>
+                                    <i class="fas fa-info-circle"></i>
+                                    Setelah checkout, notifikasi akan dikirim ke Discord server.
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
                     <button type="button" class="btn btn-primary" onclick="processCheckout()">
                         <i class="fas fa-paper-plane"></i> Konfirmasi Pesanan
                     </button>
@@ -211,14 +375,16 @@
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalTitle">Tambah Produk Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="productModalTitle">
+                        <i class="fas fa-plus"></i> Tambah Produk Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Nama Produk *</label>
-                        <input type="text" id="product-name" class="form-control" required>
+                        <input type="text" id="product-name" class="form-control" placeholder="Masukkan nama produk" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Kategori *</label>
@@ -233,22 +399,46 @@
                             <option value="alat rampok">Alat Rampok</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Harga ($) *</label>
-                        <input type="number" id="product-price" class="form-control" min="0" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Stok *</label>
-                        <input type="number" id="product-stock" class="form-control" min="0" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Harga ($) *</label>
+                                <input type="number" id="product-price" class="form-control" min="0" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Stok *</label>
+                                <input type="number" id="product-stock" class="form-control" min="0" placeholder="0" required>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Deskripsi</label>
-                        <textarea id="product-description" class="form-control" rows="3"></textarea>
+                        <textarea id="product-description" class="form-control" rows="3" placeholder="Deskripsi produk (opsional)"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="productModalButton" onclick="saveProduct()">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <button type="button" class="btn btn-primary" id="productModalButton" onclick="saveProduct()">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p id="loading-message">Memproses...</p>
                 </div>
             </div>
         </div>
