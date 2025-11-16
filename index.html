@@ -1,3 +1,5 @@
+[file name]: deepseek_html_20251116_764997.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +8,7 @@
     <title>Las Valkyrie - Resource Order System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS tetap sama seperti sebelumnya */
+        /* CSS TETAP SAMA */
         :root {
             --primary: #2c3e50;
             --secondary: #3498db;
@@ -175,48 +177,6 @@
             background-color: #5b73b4;
         }
         
-        /* === PERBAIKAN 3: STYLING UNTUK BUTTON DISABLED === */
-        .btn:disabled {
-            background-color: #7f8c8d !important;
-            cursor: not-allowed !important;
-            opacity: 0.6;
-        }
-
-        .btn:disabled:hover {
-            background-color: #7f8c8d !important;
-        }
-
-        .product-stock.out-of-stock {
-            color: var(--danger) !important;
-            font-weight: bold;
-        }
-        /* === END PERBAIKAN 3 === */
-        
-        /* === STYLING UNTUK EMOJI SELECT === */
-        .emoji-select {
-            width: 100%;
-            padding: 10px;
-            background-color: #34495e;
-            border: 1px solid #2c3e50;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .emoji-select option {
-            background-color: #2c3e50;
-            color: white;
-            padding: 8px;
-            font-size: 16px;
-        }
-
-        .emoji-preview {
-            display: inline-block;
-            margin-left: 10px;
-            font-size: 20px;
-            vertical-align: middle;
-        }
-        
         .categories {
             display: flex;
             justify-content: center;
@@ -322,181 +282,6 @@
             padding: 5px;
         }
         
-        /* Login Modal */
-        .login-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-content {
-            background-color: var(--dark);
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        /* Admin Panel */
-        .admin-panel {
-            background-color: var(--dark);
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid var(--success);
-        }
-
-        .admin-panel h2 {
-            color: var(--success);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #34495e;
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .admin-tab-btn {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .admin-tab-btn.active {
-            background-color: var(--secondary);
-        }
-
-        .admin-tab-btn:hover {
-            background-color: #34495e;
-        }
-
-        .admin-tab-content {
-            display: none;
-        }
-
-        .admin-tab-content.active {
-            display: block;
-        }
-
-        /* Stock Management */
-        .stock-controls {
-            background-color: #2c3e50;
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .stock-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .stock-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .stock-table th,
-        .stock-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #34495e;
-        }
-
-        .stock-table th {
-            background-color: #2c3e50;
-            color: var(--secondary);
-            font-weight: bold;
-        }
-
-        .stock-table tr:hover {
-            background-color: #2c3e50;
-        }
-
-        .stock-actions-small {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        .stock-actions-small .btn {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-        }
-
-        /* Orders List */
-        .orders-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .order-item {
-            background-color: #2c3e50;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--warning);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .order-customer {
-            font-weight: bold;
-            color: var(--secondary);
-        }
-
-        .order-date {
-            color: var(--light);
-            font-size: 0.9rem;
-        }
-
-        .order-items {
-            margin: 10px 0;
-        }
-
-        .order-item-product {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid #34495e;
-            flex-wrap: wrap;
-        }
-
-        .order-total {
-            text-align: right;
-            font-weight: bold;
-            color: var(--success);
-            margin-top: 10px;
-        }
-
         .cart-modal {
             display: none;
             position: fixed;
@@ -602,11 +387,6 @@
             resize: vertical;
         }
         
-        select option {
-            background-color: #2c3e50;
-            color: white;
-        }
-        
         footer {
             background-color: var(--dark);
             padding: 2rem 0;
@@ -639,37 +419,6 @@
             background-color: var(--danger);
         }
         
-        .webhook-config {
-            background-color: var(--dark);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .webhook-config h3 {
-            margin-bottom: 15px;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .webhook-instructions {
-            background-color: #2c3e50;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-        
-        .webhook-instructions ol {
-            margin-left: 20px;
-            margin-bottom: 10px;
-        }
-        
-        .webhook-instructions li {
-            margin-bottom: 8px;
-        }
-        
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -677,27 +426,6 @@
             
             .products {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .admin-tabs {
-                flex-direction: column;
-            }
-            
-            .stock-actions {
-                flex-direction: column;
-            }
-            
-            .stock-table {
-                font-size: 0.8rem;
-            }
-            
-            .stock-actions-small {
-                flex-direction: column;
-            }
-            
-            .order-header {
-                flex-direction: column;
-                align-items: flex-start;
             }
             
             .cart-item {
@@ -710,28 +438,125 @@
                 justify-content: space-between;
             }
         }
+
+        .backend-status {
+            background: var(--dark);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            border-left: 4px solid var(--success);
+        }
+
+        .backend-status.offline {
+            border-left-color: var(--danger);
+        }
+
+        /* Panel Admin */
+        .admin-panel {
+            display: none;
+            background-color: var(--dark);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-tab {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .admin-tab.active {
+            background-color: var(--secondary);
+        }
+
+        .admin-tab:hover {
+            background-color: #34495e;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .product-list {
+            margin-top: 20px;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .product-row:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .product-actions-admin {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-content {
+            background-color: var(--dark);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
     </style>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div class="login-modal" id="loginModal">
-        <div class="login-content">
-            <h2>Login Admin Gudang</h2>
-            <div class="form-group">
-                <label for="adminUsername">Username</label>
-                <input type="text" id="adminUsername" placeholder="Masukkan username">
-            </div>
-            <div class="form-group">
-                <label for="adminPassword">Password</label>
-                <input type="password" id="adminPassword" placeholder="Masukkan password">
-            </div>
-            <div class="form-group">
-                <button class="btn btn-success" id="loginBtn">Login</button>
-                <button class="btn btn-danger" id="closeLogin">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <header>
         <div class="container">
             <nav>
@@ -742,14 +567,12 @@
                     <a href="#home">Beranda</a>
                     <a href="#products">Produk</a>
                     <a href="#about">Tentang</a>
-                    <a href="#" id="adminLoginBtn">Login Admin</a>
-                    <a href="#" id="adminPanelBtn" style="display: none;">Panel Admin</a>
-                    <a href="#" id="logoutBtn" style="display: none;">Logout</a>
                 </div>
                 <div class="cart-icon" id="cartIcon">
                     <i class="fas fa-shopping-cart"></i>
                     <div class="cart-count" id="cartCount">0</div>
                 </div>
+                <button class="btn btn-warning admin-login-btn" id="adminLoginBtn">Admin Login</button>
             </nav>
         </div>
     </header>
@@ -758,6 +581,9 @@
         <div class="container">
             <h2>Las Valkyrie Resource Order System</h2>
             <p>Pemesanan Senjata, Armor, Attachment dan Drugs</p>
+            <div class="backend-status" id="backendStatus">
+                🔄 Checking backend connection...
+            </div>
             <a href="#products" class="btn">Lihat Produk</a>
         </div>
     </section>
@@ -768,8 +594,9 @@
             <button class="category-btn" data-category="weapons">Senjata</button>
             <button class="category-btn" data-category="ammo">Peluru</button>
             <button class="category-btn" data-category="vest">Armor</button>
-            <button class="category-btn" data-category="attachment">Attachment</button>
             <button class="category-btn" data-category="drugs">Drugs</button>
+            <button class="category-btn" data-category="attachment">Attachment</button>
+            <button class="category-btn" data-category="alat_rampok">Alat Rampok</button>
         </div>
 
         <div class="products" id="productsContainer">
@@ -777,108 +604,82 @@
         </div>
     </section>
 
-    <!-- Admin Panel -->
-    <div class="container">
-        <div class="admin-panel" id="adminPanel" style="display: none;">
-            <h2><i class="fas fa-cogs"></i> Panel Admin Gudang</h2>
-            
-            <div class="admin-tabs">
-                <button class="admin-tab-btn active" data-tab="add-product">Tambah Produk</button>
-                <button class="admin-tab-btn" data-tab="manage-stock">Kelola Stok</button>
-                <button class="admin-tab-btn" data-tab="view-orders">Lihat Pesanan</button>
-            </div>
-
-            <!-- Tab: Tambah Produk -->
-            <div class="admin-tab-content active" id="add-product-tab">
-                <h3>Tambah Produk Baru</h3>
+    <!-- Panel Admin -->
+    <section class="container admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2>Panel Admin</h2>
+            <button class="btn btn-danger" id="logoutBtn">Logout</button>
+        </div>
+        
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="products">Kelola Produk</button>
+            <button class="admin-tab" data-tab="orders">Kelola Pesanan</button>
+        </div>
+        
+        <div class="admin-content active" id="productsTab">
+            <h3>Tambah Produk Baru</h3>
+            <form id="addProductForm">
                 <div class="form-group">
                     <label for="productName">Nama Produk</label>
-                    <input type="text" id="productName" placeholder="Nama produk">
+                    <input type="text" id="productName" required>
                 </div>
                 <div class="form-group">
                     <label for="productCategory">Kategori</label>
-                    <select id="productCategory">
+                    <select id="productCategory" required>
                         <option value="weapons">Senjata</option>
                         <option value="ammo">Peluru</option>
                         <option value="vest">Armor</option>
-                        <option value="attachment">Attachment</option>
                         <option value="drugs">Drugs</option>
+                        <option value="attachment">Attachment</option>
+                        <option value="alat_rampok">Alat Rampok</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="productPrice">Harga ($)</label>
-                    <input type="number" id="productPrice" placeholder="Harga produk">
+                    <input type="number" id="productPrice" min="0" required>
                 </div>
                 <div class="form-group">
-                    <label for="productStock">Stok Awal</label>
-                    <input type="number" id="productStock" placeholder="Jumlah stok awal" value="0">
+                    <label for="productStock">Stok</label>
+                    <input type="number" id="productStock" min="0" required>
                 </div>
                 <div class="form-group">
                     <label for="productImage">Emoji/Gambar</label>
-                    <select id="productImage" class="emoji-select">
-                        <option value="🔫" data-emoji="🔫">🔫 Senjata</option>
-                        <option value="📦" data-emoji="📦">📦 Peluru/Armor</option>
-                        <option value="🛠️" data-emoji="🛠️">🛠️ Attachment</option>
-                        <option value="🌿" data-emoji="🌿">🌿 Ganja</option>
-                        <option value="💊" data-emoji="💊">💊 Meth</option>
-                        <option value="🔍" data-emoji="🔍">🔍 Scope</option>
-                        <option value="📯" data-emoji="📯">📯 Magazine</option>
-                        <option value="🔇" data-emoji="🔇">🔇 Silencer</option>
-                        <option value="🫳" data-emoji="🫳">🫳 Grip</option>
-                        <option value="🔦" data-emoji="🔦">🔦 Flashlight</option>
-                        <option value="custom">Custom Emoji...</option>
-                    </select>
-                    <input type="text" id="customEmoji" placeholder="Masukkan emoji custom" style="display: none; margin-top: 5px;">
+                    <input type="text" id="productImage" placeholder="🔫, 💊, dll." required>
                 </div>
-                <button class="btn btn-success" id="addProductBtn">Tambah Produk</button>
+                <button type="submit" class="btn btn-success">Tambah Produk</button>
+            </form>
+            
+            <div class="product-list" id="adminProductList">
+                <!-- Daftar produk admin akan dimuat di sini -->
             </div>
+        </div>
+        
+        <div class="admin-content" id="ordersTab">
+            <h3>Daftar Pesanan</h3>
+            <div id="ordersList">
+                <!-- Daftar pesanan akan dimuat di sini -->
+            </div>
+        </div>
+    </section>
 
-            <!-- Tab: Kelola Stok -->
-            <div class="admin-tab-content" id="manage-stock-tab">
-                <h3>Kelola Stok Produk</h3>
-                <div class="stock-controls">
-                    <div class="form-group">
-                        <label for="stockProduct">Pilih Produk</label>
-                        <select id="stockProduct">
-                            <option value="">Pilih produk...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="stockQuantity">Jumlah</label>
-                        <input type="number" id="stockQuantity" placeholder="Jumlah stok" value="1">
-                    </div>
-                    <div class="stock-actions">
-                        <button class="btn btn-success" id="addStockBtn">Tambah Stok</button>
-                        <button class="btn btn-warning" id="reduceStockBtn">Kurangi Stok</button>
-                        <button class="btn btn-danger" id="removeProductBtn">Hapus Produk</button>
-                    </div>
-                </div>
-                <div class="stock-list">
-                    <h4>Daftar Stok Produk</h4>
-                    <table class="stock-table">
-                        <thead>
-                            <tr>
-                                <th>Nama Produk</th>
-                                <th>Kategori</th>
-                                <th>Harga</th>
-                                <th>Stok</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stockTableBody">
-                            <!-- Data stok akan dimuat di sini -->
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Modal Login Admin -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <div class="login-header">
+                <h2>Login Admin</h2>
             </div>
-
-            <!-- Tab: Lihat Pesanan -->
-            <div class="admin-tab-content" id="view-orders-tab">
-                <h3>Riwayat Pesanan</h3>
-                <div class="orders-list" id="ordersList">
-                    <!-- Riwayat pesanan akan dimuat di sini -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminId">ID Admin</label>
+                    <input type="text" id="adminId" required>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success">Login</button>
+                <button type="button" class="btn btn-danger" id="cancelLogin">Batal</button>
+            </form>
         </div>
     </div>
 
@@ -928,24 +729,12 @@
         </div>
     </div>
 
-    <!-- Konfigurasi Webhook Discord -->
-    <div class="container">
-        <div class="webhook-config">
-            <h3><i class="fab fa-discord"></i> Konfigurasi Discord Webhook</h3>
-            
-            <div class="webhook-instructions">
-                <h4>Status Webhook:</h4>
-                <p>Webhook Discord sudah dikonfigurasi otomatis untuk mengirim pesanan ke channel Las Valkyrie.</p>
-            </div>
-        </div>
-    </div>
-
     <footer>
         <div class="container">
             <p>Las Valkyrie - Resource Order System</p>
             <div class="discord-info">
                 <i class="fab fa-discord"></i>
-                <span>Terhubung dengan Discord</span>
+                <span>Terhubung dengan Discord & Backend</span>
             </div>
         </div>
     </footer>
@@ -955,41 +744,339 @@
 
     <script>
         // =============================================
-        // PRODUCTS.JS
+        // KONFIGURASI BACKEND - UPDATED FOR RAILWAY
         // =============================================
-        
-        // Data produk dengan kategori attachment
-        let products = [
-            { id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
-            { id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
-            { id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
-            { id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
-            { id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
-            { id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
-            { id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
-            { id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
-            { id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
-            { id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
-            // === PRODUK ATTACHMENT BARU ===
-            { id: 11, name: "Scope 4x", category: "attachment", price: 15000, stock: 20, image: "🔍" },
-            { id: 12, name: "Scope 8x", category: "attachment", price: 25000, stock: 15, image: "🔍" },
-            { id: 13, name: "Magazine Extended", category: "attachment", price: 8000, stock: 30, image: "📯" },
-            { id: 14, name: "Silencer", category: "attachment", price: 12000, stock: 25, image: "🔇" },
-            { id: 15, name: "Grip Vertical", category: "attachment", price: 6000, stock: 35, image: "🫳" },
-            { id: 16, name: "Flashlight", category: "attachment", price: 5000, stock: 40, image: "🔦" }
-        ];
+        // GANTI URL DI BAWAH INI DENGAN URL RAILWAY ANDA SETELAH DEPLOY
+        const BACKEND_URL = 'https://las-valkyrie-backend.railway.app'; // GANTI DENGAN URL RAILWAY ANDA
+        const API_BASE_URL = `${BACKEND_URL}/api`;
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1439123987270467697/6rAZELQSz5FN2CbLDEVDgXUgB72Dc5Rcz7abySrtq5nc57ZnZgOOl70pLDBwnHkmWT6U";
 
+        // =============================================
+        // STATE APLIKASI
+        // =============================================
+        let products = [];
+        let cart = [];
         let currentCategory = 'all';
+        let isBackendOnline = false;
+        let isAdminLoggedIn = false;
 
-        // Load products from localStorage on init
-        function loadProducts() {
-            const savedProducts = localStorage.getItem('products');
-            if (savedProducts) {
-                products = JSON.parse(savedProducts);
+        // =============================================
+        // FUNGSI BACKEND YANG SUDAH DIUPDATE
+        // =============================================
+
+        // Cek koneksi backend
+        async function checkBackendConnection() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/`);
+                const data = await response.json();
+                isBackendOnline = true;
+                updateBackendStatus('✅ Backend terhubung!', 'online');
+                return true;
+            } catch (error) {
+                isBackendOnline = false;
+                updateBackendStatus('❌ Backend offline - menggunakan mode lokal', 'offline');
+                return false;
             }
         }
 
-        // Fungsi untuk menampilkan produk
+        // Update status backend
+        function updateBackendStatus(message, status) {
+            const statusElement = document.getElementById('backendStatus');
+            statusElement.textContent = message;
+            statusElement.className = `backend-status ${status}`;
+        }
+
+        // Load products dari backend atau localStorage
+        async function loadProducts() {
+            // Coba load dari backend dulu
+            if (isBackendOnline) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/products`);
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        products = result.data;
+                        console.log('✅ Products loaded from backend:', products.length);
+                        saveProductsToLocalStorage();
+                        return;
+                    }
+                } catch (error) {
+                    console.log('❌ Failed to load from backend, using localStorage');
+                }
+            }
+            
+            // Fallback ke localStorage
+            const savedProducts = localStorage.getItem('products');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+                console.log('📦 Products loaded from localStorage:', products.length);
+            } else {
+                // Data default jika tidak ada data sama sekali
+                products = [
+                    { _id: 1, name: "Pistol Kacang", category: "weapons", price: 7000, stock: 50, image: "🔫" },
+                    { _id: 2, name: "Pistol 0.50", category: "weapons", price: 10000, stock: 30, image: "🔫" },
+                    { _id: 3, name: "Ceramic Pistol", category: "weapons", price: 28000, stock: 20, image: "🔫" },
+                    { _id: 4, name: "Micro SMG", category: "weapons", price: 32000, stock: 15, image: "🔫" },
+                    { _id: 5, name: "Ammo 0.50/clip", category: "ammo", price: 1000, stock: 100, image: "📦" },
+                    { _id: 6, name: "Ammo 9mm/clip", category: "ammo", price: 3200, stock: 80, image: "📦" },
+                    { _id: 7, name: "Vest Merah(Armor 50%)/pcs", category: "vest", price: 2000, stock: 40, image: "📦" },
+                    { _id: 8, name: "Vest Biru(Armor 90%)", category: "vest", price: 3500, stock: 25, image: "📦" },
+                    { _id: 9, name: "Ganja", category: "drugs", price: 500, stock: 60, image: "🌿" },
+                    { _id: 10, name: "Meth", category: "drugs", price: 500, stock: 60, image: "💊" },
+                ];
+                saveProductsToLocalStorage();
+            }
+        }
+
+        // Simpan products ke localStorage
+        function saveProductsToLocalStorage() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        // Kirim order ke backend
+        async function sendOrderToBackend(orderData) {
+            if (!isBackendOnline) {
+                return { success: false, error: 'Backend offline' };
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Fungsi untuk sync products dari MongoDB
+        async function syncProductsWithBackend() {
+            if (!isBackendOnline) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    products = result.data;
+                    saveProductsToLocalStorage();
+                    displayProducts();
+                    if (isAdminLoggedIn) {
+                        loadAdminProducts();
+                    }
+                    showNotification('✅ Produk tersinkronisasi dengan database!', false);
+                }
+            } catch (error) {
+                console.error('Error syncing products:', error);
+            }
+        }
+
+        // Fungsi untuk create product di backend
+        async function createProductInBackend(productData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Fungsi untuk update product di backend
+        async function updateProductInBackend(productId, productData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Fungsi untuk delete product di backend
+        async function deleteProductInBackend(productId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // =============================================
+        // FUNGSI ADMIN YANG SUDAH DIUPDATE
+        // =============================================
+
+        // Login admin
+        function loginAdmin(adminId, password) {
+            // Validasi login
+            if (adminId === 'admin' && password === 'lvime2025') {
+                isAdminLoggedIn = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('adminLoginBtn').style.display = 'none';
+                loadAdminProducts();
+                showNotification('Login admin berhasil!', false);
+                
+                // Sync products dengan backend saat login admin
+                if (isBackendOnline) {
+                    syncProductsWithBackend();
+                }
+                return true;
+            } else {
+                showNotification('ID atau password admin salah!', true);
+                return false;
+            }
+        }
+
+        // Logout admin
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminLoginBtn').style.display = 'block';
+            showNotification('Logout admin berhasil!', false);
+        }
+
+        // Load produk untuk admin
+        function loadAdminProducts() {
+            const adminProductList = document.getElementById('adminProductList');
+            adminProductList.innerHTML = '';
+            
+            if (products.length === 0) {
+                adminProductList.innerHTML = '<p>Tidak ada produk.</p>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const productRow = document.createElement('div');
+                productRow.className = 'product-row';
+                productRow.innerHTML = `
+                    <div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">$${product.price} | Stok: ${product.stock} | Kategori: ${product.category}</div>
+                    </div>
+                    <div class="product-actions-admin">
+                        <button class="btn btn-warning" onclick="editProduct('${product._id || product.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteProduct('${product._id || product.id}')">Hapus</button>
+                    </div>
+                `;
+                adminProductList.appendChild(productRow);
+            });
+        }
+
+        // Tambah produk baru - UPDATED
+        async function addProduct(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseInt(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const image = document.getElementById('productImage').value;
+            
+            const productData = { name, category, price, stock, image };
+            
+            // Coba simpan ke backend dulu
+            if (isBackendOnline) {
+                const backendResult = await createProductInBackend(productData);
+                
+                if (backendResult.success) {
+                    products.push(backendResult.data);
+                    showNotification('Produk berhasil ditambahkan ke database!', false);
+                } else {
+                    // Fallback ke localStorage
+                    const newId = products.length > 0 ? Math.max(...products.map(p => p._id || p.id)) + 1 : 1;
+                    products.push({ _id: newId, ...productData });
+                    showNotification('Produk berhasil ditambahkan (mode lokal)', false);
+                }
+            } else {
+                // Mode offline - localStorage only
+                const newId = products.length > 0 ? Math.max(...products.map(p => p._id || p.id)) + 1 : 1;
+                products.push({ _id: newId, ...productData });
+                showNotification('Produk berhasil ditambahkan (mode offline)', false);
+            }
+            
+            saveProductsToLocalStorage();
+            displayProducts();
+            loadAdminProducts();
+            document.getElementById('addProductForm').reset();
+        }
+
+        // Edit produk - UPDATED
+        async function editProduct(productId) {
+            const product = products.find(p => (p._id || p.id) == productId);
+            
+            if (!product) {
+                showNotification('Produk tidak ditemukan!', true);
+                return;
+            }
+            
+            // Isi form dengan data produk
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productImage').value = product.image;
+            
+            // Hapus produk lama
+            await deleteProduct(productId, false);
+            
+            showNotification('Isi form dengan data baru dan klik "Tambah Produk" untuk menyimpan perubahan', false);
+        }
+
+        // Hapus produk - UPDATED
+        async function deleteProduct(productId, showNotificationFlag = true) {
+            if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+                return;
+            }
+            
+            // Coba hapus dari backend dulu
+            if (isBackendOnline) {
+                const backendResult = await deleteProductInBackend(productId);
+                if (!backendResult.success) {
+                    showNotification('Gagal menghapus dari database, menghapus secara lokal saja', true);
+                }
+            }
+            
+            products = products.filter(p => (p._id || p.id) != productId);
+            saveProductsToLocalStorage();
+            displayProducts();
+            loadAdminProducts();
+            
+            if (showNotificationFlag) {
+                showNotification('Produk berhasil dihapus!', false);
+            }
+        }
+
+        // =============================================
+        // FUNGSI UTAMA APLIKASI
+        // =============================================
+
+        // Tampilkan products
         function displayProducts() {
             const productsContainer = document.getElementById('productsContainer');
             productsContainer.innerHTML = '';
@@ -1002,10 +1089,9 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
-                // === PERBAIKAN 3: UPDATE STOCK INFO & BUTTON ===
                 const stockInfo = product.stock > 0 
                     ? `<div class="product-stock" style="color: var(--success);">Stok: ${product.stock}</div>`
-                    : `<div class="product-stock out-of-stock">🛑 STOK HABIS</div>`;
+                    : `<div class="product-stock" style="color: var(--danger);">Stok Habis</div>`;
                 
                 productCard.innerHTML = `
                     <div class="product-image">
@@ -1017,50 +1103,21 @@
                         ${stockInfo}
                         <div class="product-actions">
                             <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
-                                <input type="text" class="quantity-input" id="quantity-${product.id}" value="0" readonly>
-                                <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
+                                <button class="quantity-btn" onclick="decreaseQuantity('${product._id || product.id}')">-</button>
+                                <input type="text" class="quantity-input" id="quantity-${product._id || product.id}" value="0" readonly>
+                                <button class="quantity-btn" onclick="increaseQuantity('${product._id || product.id}')">+</button>
                             </div>
-                            <button class="btn" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
-                                ${product.stock === 0 ? '🛑 Stok Habis' : 'Tambah'}
+                            <button class="btn" onclick="addToCart('${product._id || product.id}')" ${product.stock === 0 ? 'disabled' : ''}>
+                                ${product.stock === 0 ? 'Stok Habis' : 'Tambah'}
                             </button>
                         </div>
                     </div>
                 `;
-                // === END PERBAIKAN 3 ===
-                
                 productsContainer.appendChild(productCard);
             });
         }
 
-        // Fungsi untuk menambah jumlah produk
-        function increaseQuantity(productId) {
-            const quantityInput = document.getElementById(`quantity-${productId}`);
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-        }
-
-        // Fungsi untuk mengurangi jumlah produk
-        function decreaseQuantity(productId) {
-            const quantityInput = document.getElementById(`quantity-${productId}`);
-            if (parseInt(quantityInput.value) > 0) {
-                quantityInput.value = parseInt(quantityInput.value) - 1;
-            }
-        }
-
-        // Fungsi untuk mengubah kategori
-        function changeCategory(category) {
-            currentCategory = category;
-            displayProducts();
-        }
-
-        // =============================================
-        // CART.JS
-        // =============================================
-        
-        // State keranjang
-        let cart = [];
-
-        // Fungsi untuk menambahkan produk ke keranjang
+        // Fungsi keranjang - UPDATED
         function addToCart(productId) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
             const quantity = parseInt(quantityInput.value);
@@ -1070,24 +1127,16 @@
                 return;
             }
             
-            const product = products.find(p => p.id === productId);
+            const product = products.find(p => (p._id || p.id) == productId);
             
-            // === PERBAIKAN 1: CEK JIKA STOK 0 ===
-            if (product.stock === 0) {
-                showNotification(`❌ ${product.name} stok habis! Tidak bisa ditambahkan ke keranjang.`, true);
-                return;
-            }
-            
-            // Cek stok
             if (product.stock < quantity) {
                 showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
                 return;
             }
             
-            const existingItem = cart.find(item => item.id === productId);
+            const existingItem = cart.find(item => item.id == productId);
             
             if (existingItem) {
-                // Cek stok untuk item yang sudah ada di keranjang
                 if (product.stock < (existingItem.quantity + quantity)) {
                     showNotification(`Stok ${product.name} tidak mencukupi! Stok tersedia: ${product.stock}`, true);
                     return;
@@ -1095,7 +1144,7 @@
                 existingItem.quantity += quantity;
             } else {
                 cart.push({
-                    id: product.id,
+                    id: product._id || product.id,
                     name: product.name,
                     price: product.price,
                     quantity: quantity,
@@ -1105,18 +1154,14 @@
             
             updateCart();
             quantityInput.value = 0;
-            
             showNotification(`${quantity} ${product.name} telah ditambahkan ke keranjang!`, false);
         }
 
-        // Fungsi untuk memperbarui tampilan keranjang
         function updateCart() {
-            // Update jumlah item di ikon keranjang
             const cartCount = document.getElementById('cartCount');
             const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
             cartCount.textContent = totalItems;
             
-            // Update daftar item di modal keranjang
             const cartItems = document.getElementById('cartItems');
             const cartTotal = document.getElementById('cartTotal');
             
@@ -1138,10 +1183,10 @@
                             <div class="cart-item-price">$${item.price} x ${item.quantity}</div>
                         </div>
                         <div class="cart-item-quantity">
-                            <button class="quantity-btn" onclick="decreaseCartQuantity(${item.id})">-</button>
+                            <button class="quantity-btn" onclick="decreaseCartQuantity('${item.id}')">-</button>
                             <span>${item.quantity}</span>
-                            <button class="quantity-btn" onclick="increaseCartQuantity(${item.id})">+</button>
-                            <button class="btn btn-danger" onclick="removeFromCart(${item.id})">Hapus</button>
+                            <button class="quantity-btn" onclick="increaseCartQuantity('${item.id}')">+</button>
+                            <button class="btn btn-danger" onclick="removeFromCart('${item.id}')">Hapus</button>
                         </div>
                     `;
                     cartItems.appendChild(cartItem);
@@ -1151,39 +1196,46 @@
             cartTotal.textContent = `$${totalPrice}`;
         }
 
-        // Fungsi untuk menambah jumlah item di keranjang
+        function increaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decreaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            if (parseInt(quantityInput.value) > 0) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        }
+
         function increaseCartQuantity(productId) {
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => item.id == productId);
             if (item) {
                 item.quantity += 1;
                 updateCart();
             }
         }
 
-        // Fungsi untuk mengurangi jumlah item di keranjang
         function decreaseCartQuantity(productId) {
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => item.id == productId);
             if (item && item.quantity > 1) {
                 item.quantity -= 1;
                 updateCart();
             }
         }
 
-        // Fungsi untuk menghapus item dari keranjang
         function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
+            cart = cart.filter(item => item.id != productId);
             updateCart();
             showNotification('Item telah dihapus dari keranjang');
         }
 
-        // Fungsi untuk menampilkan form checkout
         function showCheckoutForm() {
             if (cart.length === 0) {
                 showNotification('Keranjang Anda kosong!', true);
                 return;
             }
             
-            // Update daftar item di form checkout
             const checkoutItems = document.getElementById('checkoutItems');
             const checkoutTotal = document.getElementById('checkoutTotal');
             
@@ -1210,35 +1262,13 @@
             
             checkoutTotal.textContent = `$${totalPrice}`;
             
-            // Sembunyikan modal keranjang dan tampilkan form checkout
             document.getElementById('cartModal').style.display = 'none';
             document.getElementById('checkoutForm').style.display = 'block';
-            
-            // Scroll ke form checkout
             document.getElementById('checkoutForm').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Fungsi untuk mereset keranjang setelah pesanan dikirim
-        function resetCart() {
-            cart = [];
-            updateCart();
-            document.getElementById('checkoutForm').style.display = 'none';
-            document.getElementById('customerName').value = '';
-            document.getElementById('discordId').value = '';
-            document.getElementById('additionalInfo').value = '';
-        }
-
-        // =============================================
-        // DISCORD.JS
-        // =============================================
-        
-        // Konfigurasi webhook Discord
-        const webhookUrl = "https://discord.com/api/webhooks/1439123987270467697/6rAZELQSz5FN2CbLDEVDgXUgB72Dc5Rcz7abySrtq5nc57ZnZgOOl70pLDBwnHkmWT6U";
-
-        let ordersHistory = JSON.parse(localStorage.getItem('ordersHistory')) || [];
-
-        // Fungsi untuk mengirim pesanan ke Discord
-        async function sendOrderToDiscord() {
+        // Fungsi order utama
+        async function processOrder() {
             const customerName = document.getElementById('customerName').value;
             const discordId = document.getElementById('discordId').value;
             const additionalInfo = document.getElementById('additionalInfo').value;
@@ -1253,48 +1283,85 @@
                 return;
             }
             
-            // Cek stok semua item sebelum memproses
+            // Cek stok
             for (const item of cart) {
-                const product = products.find(p => p.id === item.id);
+                const product = products.find(p => (p._id || p.id) == item.id);
                 if (!product || product.stock < item.quantity) {
                     showNotification(`Stok ${item.name} tidak mencukupi!`, true);
                     return;
                 }
             }
             
-            // Format pesanan untuk Discord sesuai permintaan
-            let totalPrice = 0;
-            let itemsText = '';
-            const orderItems = [];
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalPrice += itemTotal;
-                itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
-                orderItems.push({
+            // Siapkan data order
+            const orderData = {
+                customerName: customerName,
+                discordId: discordId,
+                additionalInfo: additionalInfo,
+                items: cart.map(item => ({
+                    product: item.id,
                     name: item.name,
                     price: item.price,
                     quantity: item.quantity
-                });
-                
-                // Kurangi stok
-                const product = products.find(p => p.id === item.id);
+                }))
+            };
+            
+            // 1. Coba kirim ke backend dulu
+            if (isBackendOnline) {
+                const backendResult = await sendOrderToBackend(orderData);
+                if (backendResult.success) {
+                    showNotification('✅ Order berhasil dikirim ke backend!', false);
+                    updateProductStock();
+                    resetCart();
+                    return;
+                }
+            }
+            
+            // 2. Fallback ke Discord
+            await sendOrderToDiscord(orderData);
+            updateProductStock();
+            resetCart();
+        }
+
+        // Update stok produk setelah order
+        function updateProductStock() {
+            cart.forEach(item => {
+                const product = products.find(p => (p._id || p.id) == item.id);
                 if (product) {
                     product.stock -= item.quantity;
                 }
             });
+            saveProductsToLocalStorage();
+            displayProducts();
+        }
+
+        // Reset keranjang
+        function resetCart() {
+            cart = [];
+            updateCart();
+            document.getElementById('checkoutForm').style.display = 'none';
+            document.getElementById('customerName').value = '';
+            document.getElementById('discordId').value = '';
+            document.getElementById('additionalInfo').value = '';
+        }
+
+        // Kirim ke Discord (fallback)
+        async function sendOrderToDiscord(orderData) {
+            let totalPrice = 0;
+            let itemsText = '';
             
-            // Simpan perubahan stok
-            saveProducts();
+            orderData.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                totalPrice += itemTotal;
+                itemsText += `• ${item.name} ($${item.price}) x ${item.quantity} = **$${itemTotal}**\n`;
+            });
             
             const now = new Date();
             const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
             
-            const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${customerName}\n${discordId ? `**Discord ID:** ${discordId}\n` : ''}${additionalInfo ? `**Info Tambahan:** ${additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
+            const orderMessage = `----------------------------------------------\n**🚀 PESANAN BARU **\n\n**Pemesan:** ${orderData.customerName}\n${orderData.discordId ? `**Discord ID:** ${orderData.discordId}\n` : ''}${orderData.additionalInfo ? `**Info Tambahan:** ${orderData.additionalInfo}\n\n` : '\n'}**📦 ITEMS DIPESAN:**\n${itemsText}\n**💰 TOTAL: $${totalPrice}**\n\n*Pesanan dibuat pada: ${formattedDate}*`;
             
             try {
-                // Kirim pesanan ke Discord menggunakan webhook
-                const response = await fetch(webhookUrl, {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1307,412 +1374,15 @@
                 
                 if (response.ok) {
                     showNotification('✅ Pesanan berhasil dikirim ke Discord!', false);
-                    
-                    // Simpan riwayat pesanan
-                    addOrderToHistory({
-                        customerName: customerName,
-                        discordId: discordId,
-                        additionalInfo: additionalInfo,
-                        items: orderItems,
-                        total: totalPrice
-                    });
-                    
-                    resetCart();
                 } else {
-                    console.error('Discord API Error:', response.status, response.statusText);
-                    showNotification('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda!', true);
+                    showNotification('❌ Gagal mengirim pesanan ke Discord!', true);
                 }
             } catch (error) {
-                console.error('Network Error:', error);
-                showNotification('❌ Terjadi kesalahan jaringan. Periksa koneksi internet Anda!', true);
+                showNotification('❌ Error mengirim pesanan!', true);
             }
         }
 
-        // =============================================
-        // ADMIN.JS
-        // =============================================
-        
-        // Admin Configuration
-        const ADMIN_CREDENTIALS = {
-            username: "admin",
-            password: "admin123"
-        };
-
-        let isAdminLoggedIn = false;
-
-        // Admin Login Functions
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-
-        function hideLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('adminUsername').value = '';
-            document.getElementById('adminPassword').value = '';
-        }
-
-        function loginAdmin() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                isAdminLoggedIn = true;
-                showNotification('Login berhasil! Selamat datang Admin.', false);
-                hideLoginModal();
-                updateAdminUI();
-                loadStockManagement();
-            } else {
-                showNotification('Username atau password salah!', true);
-            }
-        }
-
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            showNotification('Logout berhasil!', false);
-            updateAdminUI();
-        }
-
-        function updateAdminUI() {
-            const adminLoginBtn = document.getElementById('adminLoginBtn');
-            const adminPanelBtn = document.getElementById('adminPanelBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const adminPanel = document.getElementById('adminPanel');
-            
-            if (isAdminLoggedIn) {
-                adminLoginBtn.style.display = 'none';
-                adminPanelBtn.style.display = 'block';
-                logoutBtn.style.display = 'block';
-                adminPanel.style.display = 'block';
-            } else {
-                adminLoginBtn.style.display = 'block';
-                adminPanelBtn.style.display = 'none';
-                logoutBtn.style.display = 'none';
-                adminPanel.style.display = 'none';
-            }
-        }
-
-        // Fungsi untuk handle emoji selection
-        function setupEmojiSelection() {
-            const emojiSelect = document.getElementById('productImage');
-            const customEmojiInput = document.getElementById('customEmoji');
-            const productCategory = document.getElementById('productCategory');
-            
-            // Auto-select emoji berdasarkan kategori
-            productCategory.addEventListener('change', function() {
-                const category = this.value;
-                const emojiMap = {
-                    'weapons': '🔫',
-                    'ammo': '📦',
-                    'vest': '📦',
-                    'attachment': '🛠️',
-                    'drugs': '🌿'
-                };
-                
-                if (emojiMap[category]) {
-                    emojiSelect.value = emojiMap[category];
-                    customEmojiInput.style.display = 'none';
-                }
-            });
-            
-            // Handle custom emoji selection
-            emojiSelect.addEventListener('change', function() {
-                if (this.value === 'custom') {
-                    customEmojiInput.style.display = 'block';
-                    customEmojiInput.focus();
-                } else {
-                    customEmojiInput.style.display = 'none';
-                }
-            });
-        }
-
-        // Get selected emoji value
-        function getSelectedEmoji() {
-            const emojiSelect = document.getElementById('productImage');
-            const customEmojiInput = document.getElementById('customEmoji');
-            
-            if (emojiSelect.value === 'custom') {
-                return customEmojiInput.value || '🔫';
-            }
-            return emojiSelect.value;
-        }
-
-        // Product Management Functions
-        function addProduct() {
-            if (!isAdminLoggedIn) {
-                showNotification('Anda harus login sebagai admin!', true);
-                return;
-            }
-            
-            const name = document.getElementById('productName').value;
-            const category = document.getElementById('productCategory').value;
-            const price = parseInt(document.getElementById('productPrice').value);
-            const stock = parseInt(document.getElementById('productStock').value);
-            const image = getSelectedEmoji();
-            
-            if (!name || !price) {
-                showNotification('Harap isi nama dan harga produk!', true);
-                return;
-            }
-            
-            const newProduct = {
-                id: Date.now(), // Generate unique ID
-                name: name,
-                category: category,
-                price: price,
-                stock: stock,
-                image: image
-            };
-            
-            products.push(newProduct);
-            saveProducts();
-            displayProducts();
-            loadStockManagement();
-            
-            // Reset form
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productStock').value = '0';
-            document.getElementById('productImage').value = '🔫';
-            document.getElementById('customEmoji').style.display = 'none';
-            document.getElementById('customEmoji').value = '';
-            
-            showNotification('Produk berhasil ditambahkan!', false);
-        }
-
-        function loadStockManagement() {
-            if (!isAdminLoggedIn) return;
-            
-            const stockProductSelect = document.getElementById('stockProduct');
-            const stockTableBody = document.getElementById('stockTableBody');
-            
-            // Update product dropdown
-            stockProductSelect.innerHTML = '<option value="">Pilih produk...</option>';
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.name} (Stok: ${product.stock})`;
-                stockProductSelect.appendChild(option);
-            });
-            
-            // Update stock table
-            stockTableBody.innerHTML = '';
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${getCategoryName(product.category)}</td>
-                    <td>$${product.price}</td>
-                    <td>${product.stock}</td>
-                    <td>
-                        <div class="stock-actions-small">
-                            <button class="btn btn-success" onclick="quickAddStock(${product.id})">+10</button>
-                            <button class="btn btn-warning" onclick="quickReduceStock(${product.id})">-10</button>
-                            <button class="btn btn-danger" onclick="removeProduct(${product.id})">Hapus</button>
-                        </div>
-                    </td>
-                `;
-                stockTableBody.appendChild(row);
-            });
-        }
-
-        function getCategoryName(category) {
-            const categories = {
-                'weapons': 'Senjata',
-                'ammo': 'Peluru',
-                'vest': 'Armor',
-                'attachment': 'Attachment',
-                'drugs': 'Drugs'
-            };
-            return categories[category] || category;
-        }
-
-        function modifyStock(action) {
-            if (!isAdminLoggedIn) {
-                showNotification('Anda harus login sebagai admin!', true);
-                return;
-            }
-            
-            const productId = parseInt(document.getElementById('stockProduct').value);
-            const quantity = parseInt(document.getElementById('stockQuantity').value);
-            
-            if (!productId || !quantity || quantity <= 0) {
-                showNotification('Pilih produk dan masukkan jumlah yang valid!', true);
-                return;
-            }
-            
-            const product = products.find(p => p.id === productId);
-            if (!product) {
-                showNotification('Produk tidak ditemukan!', true);
-                return;
-            }
-            
-            if (action === 'add') {
-                product.stock += quantity;
-                showNotification(`Stok ${product.name} ditambah ${quantity}. Stok sekarang: ${product.stock}`, false);
-            } else if (action === 'reduce') {
-                if (product.stock < quantity) {
-                    showNotification('Stok tidak mencukupi!', true);
-                    return;
-                }
-                product.stock -= quantity;
-                showNotification(`Stok ${product.name} dikurangi ${quantity}. Stok sekarang: ${product.stock}`, false);
-            }
-            
-            saveProducts();
-            displayProducts();
-            loadStockManagement();
-            
-            // Reset form
-            document.getElementById('stockQuantity').value = '1';
-        }
-
-        function quickAddStock(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                product.stock += 10;
-                saveProducts();
-                displayProducts();
-                loadStockManagement();
-                showNotification(`Stok ${product.name} ditambah 10. Stok sekarang: ${product.stock}`, false);
-            }
-        }
-
-        function quickReduceStock(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                if (product.stock < 10) {
-                    showNotification('Stok tidak mencukupi!', true);
-                    return;
-                }
-                product.stock -= 10;
-                saveProducts();
-                displayProducts();
-                loadStockManagement();
-                showNotification(`Stok ${product.name} dikurangi 10. Stok sekarang: ${product.stock}`, false);
-            }
-        }
-
-        function removeProduct(productId) {
-            if (!isAdminLoggedIn) {
-                showNotification('Anda harus login sebagai admin!', true);
-                return;
-            }
-            
-            if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
-                return;
-            }
-            
-            const productIndex = products.findIndex(p => p.id === productId);
-            if (productIndex !== -1) {
-                const productName = products[productIndex].name;
-                products.splice(productIndex, 1);
-                saveProducts();
-                displayProducts();
-                loadStockManagement();
-                showNotification(`Produk ${productName} berhasil dihapus!`, false);
-            }
-        }
-
-        function saveProducts() {
-            localStorage.setItem('products', JSON.stringify(products));
-        }
-
-        // Orders History Functions
-        function addOrderToHistory(orderData) {
-            ordersHistory.unshift({
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                ...orderData
-            });
-            
-            // Keep only last 50 orders
-            if (ordersHistory.length > 50) {
-                ordersHistory = ordersHistory.slice(0, 50);
-            }
-            
-            localStorage.setItem('ordersHistory', JSON.stringify(ordersHistory));
-            loadOrdersHistory();
-        }
-
-        function loadOrdersHistory() {
-            if (!isAdminLoggedIn) return;
-            
-            const ordersList = document.getElementById('ordersList');
-            ordersList.innerHTML = '';
-            
-            if (ordersHistory.length === 0) {
-                ordersList.innerHTML = '<p>Belum ada pesanan.</p>';
-                return;
-            }
-            
-            ordersHistory.forEach(order => {
-                const orderElement = document.createElement('div');
-                orderElement.className = 'order-item';
-                
-                const orderDate = new Date(order.timestamp).toLocaleString('id-ID');
-                
-                let itemsHtml = '';
-                if (order.items && order.items.length > 0) {
-                    order.items.forEach(item => {
-                        itemsHtml += `
-                            <div class="order-item-product">
-                                <span>${item.name}</span>
-                                <span>${item.quantity} x $${item.price} = $${item.quantity * item.price}</span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                orderElement.innerHTML = `
-                    <div class="order-header">
-                        <span class="order-customer">${order.customerName}</span>
-                        <span class="order-date">${orderDate}</span>
-                    </div>
-                    <div class="order-items">
-                        ${itemsHtml}
-                    </div>
-                    <div class="order-total">
-                        Total: $${order.total}
-                    </div>
-                    ${order.discordId ? `<div><small>Discord: ${order.discordId}</small></div>` : ''}
-                    ${order.additionalInfo ? `<div><small>Info: ${order.additionalInfo}</small></div>` : ''}
-                `;
-                
-                ordersList.appendChild(orderElement);
-            });
-        }
-
-        // Tab Management
-        function switchAdminTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.admin-tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            // Load specific tab data
-            if (tabName === 'manage-stock') {
-                loadStockManagement();
-            } else if (tabName === 'view-orders') {
-                loadOrdersHistory();
-            }
-        }
-
-        // =============================================
-        // APP.JS - MAIN APPLICATION
-        // =============================================
-        
-        // Fungsi untuk menampilkan notifikasi
+        // Notifikasi
         function showNotification(message, isError = false) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -1724,33 +1394,29 @@
             }, 5000);
         }
 
-        // Inisialisasi aplikasi
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load products from localStorage
-            loadProducts();
+        // =============================================
+        // INISIALISASI APLIKASI
+        // =============================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Cek koneksi backend
+            await checkBackendConnection();
             
-            // Inisialisasi tampilan
+            // Load products
+            await loadProducts();
             displayProducts();
             updateCart();
             
-            // Setup emoji selection
-            setupEmojiSelection();
-            
-            // Event Listeners untuk produk dan kategori
+            // Event listeners untuk navigasi
             document.querySelectorAll('.category-btn').forEach(button => {
                 button.addEventListener('click', () => {
-                    // Hapus kelas active dari semua tombol
                     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    // Tambahkan kelas active ke tombol yang diklik
                     button.classList.add('active');
-                    // Perbarui kategori saat ini
                     currentCategory = button.getAttribute('data-category');
-                    // Tampilkan produk berdasarkan kategori
                     displayProducts();
                 });
             });
 
-            // Event Listeners untuk keranjang
+            // Event listeners untuk keranjang
             document.getElementById('cartIcon').addEventListener('click', () => {
                 document.getElementById('cartModal').style.display = 'flex';
             });
@@ -1760,41 +1426,54 @@
             });
 
             document.getElementById('checkoutBtn').addEventListener('click', showCheckoutForm);
-
-            document.getElementById('confirmOrder').addEventListener('click', sendOrderToDiscord);
+            document.getElementById('confirmOrder').addEventListener('click', processOrder);
 
             document.getElementById('cancelCheckout').addEventListener('click', () => {
                 document.getElementById('checkoutForm').style.display = 'none';
             });
 
-            // Admin Event Listeners
-            document.getElementById('adminLoginBtn').addEventListener('click', showLoginModal);
-            document.getElementById('closeLogin').addEventListener('click', hideLoginModal);
-            document.getElementById('loginBtn').addEventListener('click', loginAdmin);
+            // Event listeners untuk admin
+            document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                document.getElementById('loginModal').style.display = 'flex';
+            });
+
+            document.getElementById('cancelLogin').addEventListener('click', () => {
+                document.getElementById('loginModal').style.display = 'none';
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const adminId = document.getElementById('adminId').value;
+                const password = document.getElementById('adminPassword').value;
+                loginAdmin(adminId, password);
+            });
+
             document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
-            document.getElementById('adminPanelBtn').addEventListener('click', () => {
-                document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
-            });
 
-            // Admin Product Management
-            document.getElementById('addProductBtn').addEventListener('click', addProduct);
-            document.getElementById('addStockBtn').addEventListener('click', () => modifyStock('add'));
-            document.getElementById('reduceStockBtn').addEventListener('click', () => modifyStock('reduce'));
-            document.getElementById('removeProductBtn').addEventListener('click', () => {
-                const productId = parseInt(document.getElementById('stockProduct').value);
-                if (productId) removeProduct(productId);
-            });
+            document.getElementById('addProductForm').addEventListener('submit', addProduct);
 
-            // Admin Tabs
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    switchAdminTab(e.target.getAttribute('data-tab'));
+            // Event listeners untuk tab admin
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + 'Tab';
+                    document.getElementById(tabId).classList.add('active');
                 });
             });
 
-            // Check admin login status on page load
-            updateAdminUI();
+            // Tambahkan button sync products untuk admin
+            const syncButton = document.createElement('button');
+            syncButton.className = 'btn btn-success';
+            syncButton.innerHTML = '<i class="fas fa-sync-alt"></i> Sync dengan Database';
+            syncButton.style.marginLeft = '10px';
+            syncButton.onclick = syncProductsWithBackend;
+            
+            document.querySelector('.admin-header').appendChild(syncButton);
         });
     </script>
 </body>
 </html>
+[file content end]
