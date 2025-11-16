@@ -85,24 +85,43 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
         
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
         .cart-icon {
             position: relative;
             cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
         .cart-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -5px;
+            right: -5px;
             background-color: var(--danger);
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .admin-login-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
         }
         
         .hero {
@@ -445,6 +464,15 @@
                 width: 100%;
                 justify-content: space-between;
             }
+            
+            .header-actions {
+                gap: 10px;
+            }
+            
+            .admin-login-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
         }
 
         .backend-status {
@@ -454,6 +482,7 @@
             margin: 10px 0;
             text-align: center;
             border-left: 4px solid var(--success);
+            display: inline-block;
         }
 
         .backend-status.offline {
@@ -557,27 +586,6 @@
             margin-bottom: 20px;
         }
 
-        .admin-login-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
-        .connection-test {
-            background: var(--dark);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border: 2px solid var(--secondary);
-        }
-
-        .test-buttons {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -587,6 +595,36 @@
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--dark);
+            border-radius: 20px;
+            border: 2px solid var(--success);
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .status-badge.offline {
+            border-color: var(--danger);
+        }
+
+        .edit-form {
+            background: rgba(52, 73, 94, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -602,11 +640,15 @@
                     <a href="#products">Produk</a>
                     <a href="#about">Tentang</a>
                 </div>
-                <div class="cart-icon" id="cartIcon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <div class="cart-count" id="cartCount">0</div>
+                <div class="header-actions">
+                    <div class="cart-icon" id="cartIcon" title="Keranjang">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="cart-count" id="cartCount">0</div>
+                    </div>
+                    <button class="btn btn-warning admin-login-btn" id="adminLoginBtn">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </button>
                 </div>
-                <button class="btn btn-warning admin-login-btn" id="adminLoginBtn">Admin Login</button>
             </nav>
         </div>
     </header>
@@ -616,24 +658,10 @@
             <h2>Las Valkyrie Resource Order System</h2>
             <p>Pemesanan Senjata, Armor, Attachment dan Drugs</p>
             
-            <!-- Connection Test Section -->
-            <div class="connection-test">
-                <h3>🔗 Backend Connection Status</h3>
-                <div class="backend-status" id="backendStatus">
-                    🔄 Checking backend connection...
-                </div>
-                <div class="test-buttons">
-                    <button class="btn btn-success" onclick="testBackendConnection()">
-                        🔍 Test Backend
-                    </button>
-                    <button class="btn btn-warning" onclick="testProductsAPI()">
-                        📦 Test Products API
-                    </button>
-                    <button class="btn btn-secondary" onclick="openBackendURL()">
-                        🌐 Open Backend
-                    </button>
-                </div>
-                <div id="connectionResult"></div>
+            <!-- Simple Backend Status -->
+            <div class="status-badge" id="backendStatus">
+                <i class="fas fa-sync fa-spin"></i>
+                <span>Checking backend connection...</span>
             </div>
             
             <a href="#products" class="btn">Lihat Produk</a>
@@ -700,6 +728,40 @@
                 </div>
                 <button type="submit" class="btn btn-success">Tambah Produk</button>
             </form>
+
+            <!-- Form Edit Produk (Hidden by default) -->
+            <div class="edit-form" id="editProductForm" style="display: none;">
+                <h3>Edit Produk</h3>
+                <form id="updateProductForm">
+                    <input type="hidden" id="editProductId">
+                    <div class="form-group">
+                        <label for="editProductName">Nama Produk</label>
+                        <input type="text" id="editProductName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductCategory">Kategori</label>
+                        <select id="editProductCategory" required>
+                            <option value="Senjata">Senjata</option>
+                            <option value="Armor">Armor</option>
+                            <option value="Drugs">Drugs</option>
+                            <option value="Attachment">Attachment</option>
+                            <option value="Alat Rampok">Alat Rampok</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductPrice">Harga ($)</label>
+                        <input type="number" id="editProductPrice" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductStock">Stok</label>
+                        <input type="number" id="editProductStock" min="0" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Update Produk</button>
+                        <button type="button" class="btn btn-danger" onclick="cancelEdit()">Batal</button>
+                    </div>
+                </form>
+            </div>
             
             <div class="product-list" id="adminProductList">
                 <!-- Daftar produk admin akan dimuat di sini -->
@@ -812,6 +874,7 @@
         let currentCategory = 'all';
         let isBackendOnline = false;
         let isAdminLoggedIn = false;
+        let editingProductId = null;
 
         // Mapping emoji untuk setiap kategori
         const categoryEmojis = {
@@ -832,86 +895,28 @@
         // FUNGSI BACKEND CONNECTION
         // =============================================
 
-        // Cek koneksi backend
+        // Cek koneksi backend - SIMPLIFIED
         async function checkBackendConnection() {
             const statusElement = document.getElementById('backendStatus');
-            const resultElement = document.getElementById('connectionResult');
             
             try {
-                statusElement.innerHTML = '🔄 Testing backend connection...';
+                statusElement.innerHTML = '<i class="fas fa-sync fa-spin"></i><span>Checking backend connection...</span>';
                 
                 const response = await fetch(`${BACKEND_URL}/`);
                 const data = await response.json();
                 
                 isBackendOnline = true;
-                statusElement.innerHTML = '✅ Backend terhubung!';
-                statusElement.className = 'backend-status';
-                
-                resultElement.innerHTML = `
-                    <div style="color: var(--success); margin-top: 10px;">
-                        <strong>Backend Response:</strong><br>
-                        <pre style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; overflow: auto;">
-${JSON.stringify(data, null, 2)}
-                        </pre>
-                    </div>
-                `;
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>Backend terhubung!</span>';
+                statusElement.className = 'status-badge';
                 
                 return true;
             } catch (error) {
                 isBackendOnline = false;
-                statusElement.innerHTML = '❌ Backend offline - menggunakan mode lokal';
-                statusElement.className = 'backend-status offline';
-                
-                resultElement.innerHTML = `
-                    <div style="color: var(--danger); margin-top: 10px;">
-                        <strong>Error:</strong> ${error.message}<br>
-                        <small>Menggunakan data lokal sebagai fallback</small>
-                    </div>
-                `;
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i><span>Backend offline - mode lokal</span>';
+                statusElement.className = 'status-badge offline';
                 
                 return false;
             }
-        }
-
-        // Test Products API
-        async function testProductsAPI() {
-            const resultElement = document.getElementById('connectionResult');
-            
-            try {
-                resultElement.innerHTML = '🔄 Testing Products API...';
-                
-                const response = await fetch(`${API_BASE_URL}/products`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    resultElement.innerHTML = `
-                        <div style="color: var(--success); margin-top: 10px;">
-                            <strong>✅ Products API Berhasil!</strong><br>
-                            <small>Total produk: ${data.count || data.data.length}</small>
-                            <pre style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; overflow: auto; max-height: 200px;">
-${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
-                            </pre>
-                        </div>
-                    `;
-                } else {
-                    resultElement.innerHTML = `
-                        <div style="color: var(--danger); margin-top: 10px;">
-                            <strong>❌ Products API Error:</strong> ${data.error || 'Unknown error'}
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                resultElement.innerHTML = `
-                    <div style="color: var(--danger); margin-top: 10px;">
-                        <strong>❌ Products API Failed:</strong> ${error.message}
-                    </div>
-                `;
-            }
-        }
-
-        // Open backend URL
-        function openBackendURL() {
-            window.open(BACKEND_URL, '_blank');
         }
 
         // Sync products dengan backend
@@ -942,6 +947,50 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
                 }
             } catch (error) {
                 showNotification('❌ Gagal sync dengan backend', true);
+            }
+        }
+
+        // Create product di backend
+        async function createProductInBackend(productData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productData)
+                });
+                return await response.json();
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Update product di backend
+        async function updateProductInBackend(productId, productData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productData)
+                });
+                return await response.json();
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Delete product di backend
+        async function deleteProductInBackend(productId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                    method: 'DELETE'
+                });
+                return await response.json();
+            } catch (error) {
+                return { success: false, error: error.message };
             }
         }
 
@@ -1290,7 +1339,7 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
         }
 
         // =============================================
-        // FUNGSI ADMIN
+        // FUNGSI ADMIN YANG SUDAH DIPERBAIKI
         // =============================================
 
         // Login admin
@@ -1347,7 +1396,7 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
                         </div>
                     </div>
                     <div class="product-actions-admin">
-                        <button class="btn btn-warning" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="btn btn-warning" onclick="showEditForm(${product.id})">Ubah</button>
                         <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Hapus</button>
                     </div>
                 `;
@@ -1355,37 +1404,8 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
             });
         }
 
-        // Tambah produk baru
-        function addProduct(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('productName').value;
-            const category = document.getElementById('productCategory').value;
-            const price = parseInt(document.getElementById('productPrice').value);
-            const stock = parseInt(document.getElementById('productStock').value);
-            
-            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            const image = getProductEmoji(name, category);
-            
-            products.push({ 
-                id: newId, 
-                name, 
-                category, 
-                price, 
-                stock, 
-                image 
-            });
-            
-            saveProductsToLocalStorage();
-            displayProducts();
-            loadAdminProducts();
-            document.getElementById('addProductForm').reset();
-            
-            showNotification('Produk berhasil ditambahkan!', false);
-        }
-
-        // Edit produk
-        function editProduct(productId) {
+        // Tampilkan form edit
+        function showEditForm(productId) {
             const product = products.find(p => p.id == productId);
             
             if (!product) {
@@ -1393,32 +1413,128 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
                 return;
             }
             
-            // Isi form dengan data produk
-            document.getElementById('productName').value = product.name;
-            document.getElementById('productCategory').value = product.category;
-            document.getElementById('productPrice').value = product.price;
-            document.getElementById('productStock').value = product.stock;
+            editingProductId = productId;
             
-            // Hapus produk lama
-            deleteProduct(productId, false);
+            // Isi form edit dengan data produk
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductCategory').value = product.category;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductStock').value = product.stock;
             
-            showNotification('Isi form dengan data baru dan klik "Tambah Produk" untuk menyimpan perubahan', false);
+            // Tampilkan form edit, sembunyikan form tambah
+            document.getElementById('editProductForm').style.display = 'block';
+            document.getElementById('addProductForm').style.display = 'none';
+            
+            // Scroll ke form edit
+            document.getElementById('editProductForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Batal edit
+        function cancelEdit() {
+            editingProductId = null;
+            document.getElementById('editProductForm').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'block';
+            document.getElementById('updateProductForm').reset();
+        }
+
+        // Update produk
+        async function updateProduct(event) {
+            event.preventDefault();
+            
+            const productId = document.getElementById('editProductId').value;
+            const name = document.getElementById('editProductName').value;
+            const category = document.getElementById('editProductCategory').value;
+            const price = parseInt(document.getElementById('editProductPrice').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const image = getProductEmoji(name, category);
+            
+            const productData = { name, category, price, stock, image };
+            
+            // Update di frontend
+            const productIndex = products.findIndex(p => p.id == productId);
+            if (productIndex !== -1) {
+                products[productIndex] = { ...products[productIndex], ...productData };
+            }
+            
+            // Sync dengan backend jika online
+            if (isBackendOnline) {
+                const backendResult = await updateProductInBackend(productId, productData);
+                if (backendResult.success) {
+                    showNotification('✅ Produk berhasil diupdate di database!', false);
+                } else {
+                    showNotification('⚠️ Produk diupdate secara lokal saja', false);
+                }
+            } else {
+                showNotification('✅ Produk berhasil diupdate (mode offline)', false);
+            }
+            
+            saveProductsToLocalStorage();
+            displayProducts();
+            loadAdminProducts();
+            cancelEdit();
+        }
+
+        // Tambah produk baru
+        async function addProduct(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseInt(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const image = getProductEmoji(name, category);
+            
+            const productData = { name, category, price, stock, image };
+            let newProductId;
+            
+            // Coba simpan ke backend dulu
+            if (isBackendOnline) {
+                const backendResult = await createProductInBackend(productData);
+                if (backendResult.success) {
+                    newProductId = backendResult.data._id || backendResult.data.id;
+                    products.push({ id: newProductId, ...productData });
+                    showNotification('✅ Produk berhasil ditambahkan ke database!', false);
+                } else {
+                    // Fallback ke lokal
+                    newProductId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                    products.push({ id: newProductId, ...productData });
+                    showNotification('✅ Produk berhasil ditambahkan (mode lokal)', false);
+                }
+            } else {
+                // Mode offline
+                newProductId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({ id: newProductId, ...productData });
+                showNotification('✅ Produk berhasil ditambahkan (mode offline)', false);
+            }
+            
+            saveProductsToLocalStorage();
+            displayProducts();
+            loadAdminProducts();
+            document.getElementById('addProductForm').reset();
         }
 
         // Hapus produk
-        function deleteProduct(productId, showNotificationFlag = true) {
+        async function deleteProduct(productId) {
             if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
                 return;
             }
             
+            // Hapus dari backend jika online
+            if (isBackendOnline) {
+                const backendResult = await deleteProductInBackend(productId);
+                if (!backendResult.success) {
+                    showNotification('⚠️ Gagal hapus dari database, menghapus secara lokal saja', true);
+                }
+            }
+            
+            // Hapus dari frontend
             products = products.filter(p => p.id != productId);
             saveProductsToLocalStorage();
             displayProducts();
             loadAdminProducts();
             
-            if (showNotificationFlag) {
-                showNotification('Produk berhasil dihapus!', false);
-            }
+            showNotification('✅ Produk berhasil dihapus!', false);
         }
 
         // =============================================
@@ -1477,6 +1593,7 @@ ${JSON.stringify(data.data ? data.data.slice(0, 3) : data, null, 2)}
             document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
 
             document.getElementById('addProductForm').addEventListener('submit', addProduct);
+            document.getElementById('updateProductForm').addEventListener('submit', updateProduct);
 
             // Event listeners untuk tab admin
             document.querySelectorAll('.admin-tab').forEach(tab => {
