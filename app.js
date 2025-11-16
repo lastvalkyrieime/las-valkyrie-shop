@@ -1,4 +1,4 @@
-const API_BASE = 'https://las-valkyrie-backend.vercel.app';
+const API_BASE = 'https://las-valkyrie-backend-13ctfsqa2-lastvalkyrieimes-projects.vercel.app/';
 
 let products = [];
 let cart = [];
